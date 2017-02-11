@@ -1,0 +1,28 @@
+.loginWrapper form .ant-row:nth-child(2){
+	margin-bottom:10px;
+}
+.login .ant-btn{
+	display:block;
+	margin-top:10px;
+}
+.loginBox{
+	background-image:url(./image/bg.jpg);
+	background-size:cover;
+}
+.myLogin{
+	background:url(http://www.web-jackiee.com/templets/blog/image/column/overlay.png) repeat;
+}
+.login{
+	width:70%;
+	height:250px; 
+	border-radius:5px;
+	margin-top:26%;
+	background-color:rgba(255,255,255,.45);
+	overflow:hidden;
+}
+.login img{
+	width:100%;
+}
+.loginWrapper{
+	padding:30px 30px 20px 30px;
+}

@@ -1,0 +1,44 @@
+body{
+  font-family:"Microsoft YaHei";
+  overflow:hidden;
+}
+#root,.adminView,.app-Box{
+	width:100%;
+	height:100%;
+}
+.MyAdmin,
+.MyAdmin .ant-row,
+.MyAdmin .ant-row>div{
+	height:100%;
+}
+.MyAdmin .ant-row>.ant-col-20{
+	background-size:cover;
+}
+.loginSucess{
+	letter-spacing:1px;
+}
+.loginSucess img{
+	width:100%;
+	border-radius:3px;
+}
+.loginSucess h2{
+	color:#333;
+	padding-bottom:5px;
+}
+.loginSucess ul{
+	margin-top:8px;
+}
+.loginSucess li{
+	padding-top:5px;
+	padding-bottom:5px;
+	color:#444;
+}
+.loginSucess li span{
+	margin-left:6px;
+}
+.viewWrapper{
+	display:flex;
+	justify-content:center;
+	width:100%;
+	height:100%;
+}

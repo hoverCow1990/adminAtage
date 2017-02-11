@@ -1,0 +1,45 @@
+.file-box{
+	margin-top:100px;
+}
+.file-box li{
+	width: 20%;
+    height: 79px;
+    padding-top: 10px;
+    margin-bottom: 20px;
+    float: left;
+    padding-bottom: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+.file-box li i{
+	font-size:30px;
+	transition:color .2s;
+}
+.file-box li p{
+	padding-top:6px;
+}
+.file-box li.active{
+	background:#eaeaea;
+}
+.file-box li.active div{
+	padding:4px 2px 0 2px;
+}
+.file-box .inputGroup input:nth-child(1){
+	width:60%;
+	text-indent:6px;
+	border: 1px solid #cacaca;
+}
+.file-box .inputGroup input:nth-child(2),
+.file-box .inputGroup input:nth-child(3){
+	width:20%;
+	height: 100%;
+    background: #505050;
+    border: 1px solid #eaeaea;
+    color: #fff;
+    cursor:pointer;
+    transition:.2s;
+}
+.file-box .inputGroup input:nth-child(2):hover,
+.file-box .inputGroup input:nth-child(3):hover{
+	background:#000;
+}

@@ -1,0 +1,23 @@
+.column{
+	width:90%;
+	margin:40px auto 0;
+}
+.column>p{
+	width:320px;
+	padding-bottom:6px;
+	border-bottom:1px solid #d7d7d7;
+}
+.ant-timeline{
+	margin-top:40px;
+}
+.column-carousel{
+	width:320px;
+	height:200px;
+	margin-top:40px;
+}
+.column-carousel>div{
+	cursor:pointer;
+}
+.column-carousel>span{
+	width:50%;
+}
