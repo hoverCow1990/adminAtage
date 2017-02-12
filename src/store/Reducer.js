@@ -1,11 +1,12 @@
 import {combineReducers} from 'redux';
 import {
 	adminData,
-	student
+	otherUser
 } from './login/Reducer';
 
 const reducer = combineReducers({
-	adminData
+	adminData,
+	otherUser
 })
 
 export default reducer;

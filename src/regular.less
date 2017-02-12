@@ -6,6 +6,9 @@
 	height:100%;
 }
 
-.bg(@url){
-	background-image:url(@url); 
+.bg(@url,@bool:false){
+	background-image:url(@url);
+	& when(@bool){
+		background-repeat: repeat;
+	}
 }

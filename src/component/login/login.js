@@ -1,130 +1,37 @@
-import React,{Component} from 'react';
-import { Form,Icon,Input,Button, Checkbox,Row,Col,message} from 'antd';
-import '../../../node_modules/antd/dist/antd.css';
-import './login.less';
-import {connect} from 'react-redux';
+import React,{Component} from 'react';  
+import {Form} from 'antd';                      //antd组件
+import {connect} from 'react-redux';            //connect
+import LoginContent from './LoginContent';      //登录界面
+import WelcomeContent from './WelcomeContent';  //欢迎界面
+import {bindActionCreators} from 'redux';       //用于链接异步redux的dispacth
 import {
-  checkLogin,
-  getStudent
+    initLogin,                                  //初始化请求
+    doLogin                                     //登录请求
 } from '../../store/login/Action';
-import LoginContent from './LoginContent';
-import WelcomeContent from './WelcomeContent';
+import '../../../node_modules/antd/dist/antd.css';  
+import './login.less';            
 
+const FormItem = Form.Item;
 
-const FormItem=Form.Item;
-
-// const NormalLoginForm=Form.create()(React.createClass({
-//   handleSubmit(e) {
-//     e.preventDefault();
-//     console.log(this.props.form.validateFields)
-//     this.props.form.validateFields((err, values) => {
-//       if (!err) {
-//         var val=values;
-//           val.src="http://img.dongqiudi.com/uploads/avatar/2014/10/20/8MCTb0WBFG_thumb_1413805282863.jpg";
-//           val.num="052124566";
-//           val.job="IT大佬";
-//           val.lastLogin="2016.12.28";
-//           this.props.forLog(val);
-//           message.success('登录成功',2);
-//       }
-//     });
-//   },
-//   checkName(rule, value, callback){
-//     if(/[\u4e00-\u9fa5]{2,}$/.test(value)){
-//       callback();                           //成功必定要回调一个空
-//       return;
-//     }
-//     callback('请输入正确的名字!')
-//   },
-//   render() {
-// }));
-
-// const Welcome=React.createClass({
-//     render() {
-//       var info=this.props.info;
-//       return (
-//         <div className="loginSucess">
-//           <Row >
-//             <Col span={8}>
-//               <img role="presentation" src={info.src}/>
-//             </Col>
-//             <Col span={14} offset={2}>
-//               <h2>欢迎您登录成功</h2>
-//               <ul>
-//                 <li>登录员工:<span>{info.userName}</span></li>
-//                 <li>员工编号:<span>{info.num}</span></li>
-//                 <li>职位:<span>{info.job}</span></li>
-//                 <li>上次登录时间:<span>{info.lastLogin}</span></li>
-//               </ul>
-//             </Col>
-//           </Row>
-//         </div>
-//       )
-//     }
-// });
-
-// const Login=React.createClass({
-//   render() {
-//       let props=this.props,
-//           dom=props.hasLogin?<Welcome info={props.loginData}/>:<NormalLoginForm forLog={props.forLogin}/>;
-//       return (
-//         <div className="myLogin viewWrapper">
-//           <div className="login">
-//             <div className="loginWrapper">
-//               {dom}
-//             </div>
-//           </div>
-//         </div>
-//     );
-//   }
-// });
-
-
-// const {getFieldDecorator}=this.props.form;
-//     return (
-//         <Form onSubmit={this.handleSubmit} className="login-form" action="">
-//           <FormItem>
-//             {getFieldDecorator('userName', {
-//               rules: [{ validator: this.checkName }
-//               ],
-//               validateTrigger : 'onBlur',
-//             })(
-//               <Input addonBefore={<Icon type="user" />} placeholder="用户名" />
-//             )}
-//           </FormItem>
-//           <FormItem>
-//             {getFieldDecorator('password', {
-//               rules: [{ required: true, message: '请输入密码' }],
-//             })(
-//               <Input addonBefore={<Icon type="lock" />} type="password" placeholder="密码" />
-//             )}
-//           </FormItem>
-//           <FormItem>
-//             {getFieldDecorator('remember', {
-//               valuePropName: 'checked',
-//               initialValue: true,
-//             })(
-//               <Checkbox>记住我</Checkbox>
-//             )}
-//             <Button type="primary" htmlType="submit" className="login-form-button">
-//               登录
-//             </Button>
-//           </FormItem>
-//         </Form>
-//     );
-
+/*
+ * 登录总界面
+ * 根据用户登录请款渲染不同界面,
+ * props内包含数据[adminData,otherUser],函数[dispatch,initLogin,doLogin]
+ * 作者:hoverCow 日期:2017/02/11
+ */
 
 class LoginPage extends Component{
+  //loginLodingTimer用于请求计时器
   constructor(){
     super();
     this.state = {
       loginLodingTimer : null,
-      num : 2
     };
   }
+  //未登录状态窜然LoginContent,反之渲染WelcomeContent
   render(){
-    //未登录状态显示登录界面,反之显示用户信息
-    let showContent = this.props.adminData.noLogin === true?<LoginContent/>:<WelcomeContent/>;
+    let {doLogin} = this.props;
+    let showContent = this.props.adminData.noLogin === true?<LoginContent onDoLogin={doLogin}/>:<WelcomeContent/>;
     return (
       <section className="adminLoginWrapper">
         <div className="myLogin viewWrapper">
@@ -135,60 +42,51 @@ class LoginPage extends Component{
       </section>
     )
   }
+  //组件完成是进行登录检测
   componentDidMount(){
     this.checkLogin();
   }
-
-  /*
-   * 如下函数在渲染成功后调用,进行用户是否已经登录的检测
-   *
-   */
-
+  //如下函数在渲染成功后调用,进行用户是否已经登录的检测,并获取相关数据
   checkLogin(){
     let self = this,
         {dispatch,adminData} = this.props;
-
     //Promise函数,执行后调用Action内checkLogin函数,发送请求当计时器检测到props中noLogin不为void0时调用回调
-
     const loginPromise = new Promise((solve,reject) => {
-        dispatch(checkLogin());
+        dispatch(initLogin());
         this.state.loginLodingTimer = setInterval(()=>{
           if(void 0 !== this.props.adminData.noLogin){
             clearInterval(this.state.loginLodingTimer);
             solve();
           };
     },20)});
-
     //Promise函数,执行后调用Timeout,当时间超过3秒进行报错处理,示意请求超时失败
-
     const timeOutPromise = new Promise((solve,reject) => {
         setTimeout(() => {
           clearInterval(self.state.loginLodingTimer);
           reject('request timeout');
       },3000)});
-
     //Promise.race接受一对数组,如上两primise对象任意一个先完成优先调用该回调检验3秒后超时,拒绝请求
-
     const promiseList = Promise.race([loginPromise,timeOutPromise]);
     promiseList
       .then((res) => {
-        // console.log(this.props.adminData.noLogin);
       })
       .catch(err => console.error(err));
   }
 }
 
+//需要adminData以及otherUser数据
 const setDateProps = state => {
-  let {adminData,student} = state;
+  let {adminData,otherUser} = state;
   return {
     adminData,
-    student
+    otherUser
   }
 }
-import {bindActionCreators} from 'redux';
+//链接方法
 const setFnProps = dispatch => ({
   dispatch,
-  getStudent:bindActionCreators(getStudent,dispatch)
+  initLogin:bindActionCreators(initLogin,dispatch),
+  doLogin:bindActionCreators(doLogin,dispatch)
 })
 
 export default connect(setDateProps,setFnProps)(LoginPage);

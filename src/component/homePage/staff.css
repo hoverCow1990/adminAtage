@@ -1,0 +1,13 @@
+.staffList{
+	width:80%;
+	margin:40px auto 0;
+}
+.staffList .ant-table-body{
+	height:570px;
+}
+.staffList .ant-table-body .ant-table-thead th:nth-child(1){
+	width:40%
+}
+.staffList .ant-table-body .ant-table-thead th:nth-child(1)~th{
+	width:20%;
+}
