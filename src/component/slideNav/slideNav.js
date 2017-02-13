@@ -1,8 +1,10 @@
 import React,{Component} from 'react';
-import { Menu, Icon} from 'antd';
+import {Menu,Icon} from 'antd';
 import { 
-    hashHistory ,
+    hashHistory,
 } from 'react-router';
+import {connect} from 'react-redux';     //connect
+import {doLink} from '../../store/link/Action';
 import './slideNav.css';
 
 const SubMenu = Menu.SubMenu,
@@ -13,23 +15,20 @@ const SubMenu = Menu.SubMenu,
  *  利用路由支配主界面动向
  *  作者:hoverCow,日期:2017-02-12
  */
-
 class SlideNav extends Component{
 	constructor(){
 		super();
-		this.state = {
-			current: nowUrl,
-		}
 	}
+	//渲染左边导航部分
 	render(){
 		return (
 			<nav className="childNav">
 				<div className="nav-title"><span><Icon type="share-alt" /></span>HoverCow Company</div>
 		        <Menu
 		          theme="dark"
-		          onClick={(e) => this.goKey(e)}
-		          defaultOpenKeys={['sub1']}
-		          selectedKeys={[this.state.current]}
+		          onClick={(e) => this.handlerLink(e)}
+		          defaultOpenKeys={this.handlerOpenKeys()}
+		          selectedKeys={[this.props.currentLink]}
 		          mode="inline">
 			        <SubMenu key="sub1" title={<span><Icon type="unlock" /><span>登录管理</span></span>}>
 			            <Menu.Item key="login">登录界面</Menu.Item>
@@ -50,15 +49,33 @@ class SlideNav extends Component{
 		    </nav>
 		)
 	}
-	goKey(e){
-		console.log(this);
-		let current = e.key,
-			path = current;
-		this.setState({current})
+	handlerOpenKeys(){
+		switch(this.props.currentLink){
+			case 'login' :
+			case 'regist':
+				return ['sub1'];
+			case 'homePage' :
+				return ['sub2'];
+			case 'fileCloud' :
+				return ['sub3'];
+			case 'pay' :
+			case 'income':
+			case 'profit':
+				return ['sub4'];
+			default :
+				return [];
+		}
+	}
+	//控制路由跳转以及store内currentPath值
+	handlerLink(e){
+		let path = e.key;
+		this.props.dispatch(doLink(path));
 		hashHistory.push(path); //用hashHistory 处理Router组件外的链接如果用的BrowserHistory则一样
 	}
 }
 
+const setDateProps = state =>({
+	currentLink : state.currentLink
+});
 
-
-export default SlideNav;
+export default connect(setDateProps)(SlideNav);

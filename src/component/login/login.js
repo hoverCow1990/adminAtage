@@ -68,8 +68,7 @@ class LoginPage extends Component{
     //Promise.race接受一对数组,如上两primise对象任意一个先完成优先调用该回调检验3秒后超时,拒绝请求
     const promiseList = Promise.race([loginPromise,timeOutPromise]);
     promiseList
-      .then((res) => {
-      })
+      .then((res) => {})
       .catch(err => console.error(err));
   }
 }

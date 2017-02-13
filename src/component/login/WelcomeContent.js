@@ -6,6 +6,7 @@ import {
     Button,
     Icon
 } from 'antd';
+import {hashHistory} from 'react-router';
 import {ADMIN_MAX_STAR} from '../../setting/setting';
 
 /*
@@ -26,10 +27,10 @@ class WelcomeContent extends Component{
         <figure className="loginSucess">
           <Row >
             <Col span={9} className="sucess-perview">  
-              <img className="feature" src ={require("./image/master.jpg")}/>   
+              <img className="feature" src ={require("../image/master.jpg")}/>   
             </Col>
             <Col span={14} offset={1}>
-              <ul className="userData">
+              <ul className="user-info">
                 <li><span>用户id:</span><span>{`000${id}`.slice(-4)}</span></li>
                 <li><span>用户姓名:</span><span>{name}</span></li>
                 <li><span>项目数量:</span><span>{project.length}</span></li>
@@ -37,13 +38,27 @@ class WelcomeContent extends Component{
                 <li><span>用户等级:</span><span>{this.getStar(project.length)}</span></li>
               </ul>
               <div className="userSelect">
-                <Button type="primary"><span className="tri tri-1"></span><span className="tri tri-2"></span><Icon type="home" />我的首页</Button>
-                <Button type="primary"><span className="tri tri-1"></span><span className="tri tri-2"></span><Icon type="share-alt" />其他用户</Button>
+                <Button type="primary" onClick={()=>this.doLink("homePage")}>
+                  <span className="tri tri-1"></span><span className="tri tri-2"></span><Icon type="home" />
+                  我的首页
+                </Button>
+                <Button type="primary">
+                <span className="tri tri-1"></span><span className="tri tri-2"></span><Icon type="share-alt" />
+                  其他用户
+                </Button>
+                <Button type="primary">
+                  <span className="tri tri-1"></span><span className="tri tri-2"></span><Icon type="poweroff" />
+                  退出登录
+                </Button>
               </div>
             </Col>
           </Row>
         </figure>
       )
+  }
+  //根据参数跳转路由,并更改全局currentLink
+  doLink(path){
+    hashHistory.push(path);
   }
   //匹配github地址
   getGitUrl(pro){

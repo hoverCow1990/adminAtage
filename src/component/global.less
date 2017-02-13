@@ -1,0 +1,37 @@
+@import '../regular.less';
+
+.user-info {
+	margin-top:27px;
+	padding-left:4px;
+	border-left:1px solid #6b6b6b;
+	li{
+		width:100%;
+		height:30px;
+		line-height:30px;
+		letter-spacing:0.6px;
+		span{
+			display:block;
+			float:left;
+			margin-left:6px;
+			&:first-child{
+				width:100px;
+				text-align:justify;
+			}
+			&:last-child{
+				font-family:"Comic Sans MS";
+				font-weight:800;
+				color:#222;
+				i{
+					margin-right:5px;
+					color:#dcbe4c;
+					text-shadow: 0 0 2px #583105;
+				}
+			}
+		}
+		&:hover{
+			span:first-child i{
+				transform:translateY(-3px);
+			}
+		}
+	}
+}

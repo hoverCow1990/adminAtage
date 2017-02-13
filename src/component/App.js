@@ -10,6 +10,7 @@ import SlideNav from "./slideNav/slideNav";
 import {Provider} from 'react-redux';
 import '../../node_modules/antd/dist/antd.css';
 import './App.css';
+import './global.less';
 
 // var hasLogin=false,
 //     loginData={
