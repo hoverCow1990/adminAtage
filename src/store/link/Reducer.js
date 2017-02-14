@@ -6,7 +6,7 @@ import {
  * 用于获取用户首次登录后的url获取
  */
 const stUrl   = window.location.hash,
-	  nowUrl  = stUrl?stUrl.match(/[^\/]+$/)[0]:"login";
+	  nowUrl  = stUrl?stUrl.match(/[^\/]+[^\/]/)[0]:"login";
 
 const defaultState = {
 	currentLink : nowUrl,

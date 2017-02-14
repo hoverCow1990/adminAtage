@@ -5,7 +5,10 @@ import {
     Col,
     Button,
     Icon
-} from 'antd';
+} from 'antd';                                  //antd组件
+import {
+  doLink      
+} from '../../store/link/Action'                //用于按钮链接改变侧导航currentLink
 import {hashHistory} from 'react-router';
 import {ADMIN_MAX_STAR} from '../../setting/setting';
 
@@ -58,6 +61,7 @@ class WelcomeContent extends Component{
   }
   //根据参数跳转路由,并更改全局currentLink
   doLink(path){
+    this.props.dispatch(doLink(path))
     hashHistory.push(path);
   }
   //匹配github地址

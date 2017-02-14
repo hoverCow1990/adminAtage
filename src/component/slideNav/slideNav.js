@@ -7,9 +7,7 @@ import {connect} from 'react-redux';     //connect
 import {doLink} from '../../store/link/Action';
 import './slideNav.css';
 
-const SubMenu = Menu.SubMenu,
-	  stUrl = window.location.hash,
-	  nowUrl = stUrl?stUrl.match(/[^\/]+$/)[0]:"login";
+const SubMenu = Menu.SubMenu;
 /*
  *  antd的Menu组件展示侧导航部分
  *  利用路由支配主界面动向
@@ -49,6 +47,7 @@ class SlideNav extends Component{
 		    </nav>
 		)
 	}
+	//判断currentLink设置当前高亮模块
 	handlerOpenKeys(){
 		switch(this.props.currentLink){
 			case 'login' :

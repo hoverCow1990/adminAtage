@@ -7,6 +7,7 @@ import {
 } from 'react-router';
 import LoginPage from '../component/login/login';
 import HomePage from '../component/homePage/homePage';
+import ProjectDetail from '../component/projectDetail/projectDetail';
 
 class MainRouter extends Component{
   constructor(){
@@ -17,8 +18,9 @@ class MainRouter extends Component{
         <Router history={hashHistory}>
           <Route path="/">
             <IndexRedirect to="login"/>                           //跳转至某页面依赖IndexRedirect
-            <Route path="login"    component={LoginPage}/>
-            <Route path="homePage" component={HomePage}/>
+              <Route path="/login"    component={LoginPage}/>
+              <Route path="homePage/:name" component={ProjectDetail}/>
+              <Route path="homePage" component={HomePage} />
           </Route>
         </Router>
       )

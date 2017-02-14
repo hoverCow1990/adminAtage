@@ -2,8 +2,10 @@ import {combineReducers} from 'redux';
 import {
 	INIT_LOGIN,
 	DO_LOGIN,
-	SET_OTHER_USER
+	SET_OTHER_USER,
 } from './Action';
+
+//对登录用户的信息,以及其他用户文件信息进行管理
 
 const defaultState = {
 	adminData : {

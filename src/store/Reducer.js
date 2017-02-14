@@ -3,12 +3,16 @@ import {
 	adminData,
 	otherUser,
 } from './login/Reducer';
+import {
+	projectDetail,
+} from './projectDetail/Reducer';
 import {currentLink} from './link/Reducer';
 
 const reducer = combineReducers({
 	currentLink,
 	adminData,
-	otherUser
+	otherUser,
+	projectDetail
 })
 
 export default reducer;

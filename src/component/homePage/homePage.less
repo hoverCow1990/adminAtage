@@ -1,80 +1,13 @@
-@lightGrey : #f9f9f9;
+@import '../../regular.less';
 
 .homePage{
-	padding:20px 40px 0 40px;
-	h2{
-		display:flex;
-		align-items:center;
-		text-shadow:0 0 1px rgba(0,0,0,.3);
-		i{
-			margin-right:6px;
-			text-shadow:0 0 1px #999;
-		}
-		font-size:16px;
-		padding-bottom:6px;
-		padding-top:6px;
-		margin-bottom:15px;
-		letter-spacing:1px;
-		transition:.2s;
-		span{
-			width:20px;
-			height:20px;
-			margin-right:10px;
-			background-color:#222;
-			font-family: "Comic Sans MS";
-			font-size:12px;
-			color:#eee;
-			text-align:center;
-			border-radius:50%;
-			line-height:20px;
-		}
-	}
-	.user-perview{
-		width:180px;
-		height:180px;
-		margin-top:16px;
-		border-radius:6px;
-		-webkit-mask-image: -webkit-radial-gradient(circle,white,black);
-		overflow:hidden;
-		img{
-			width:100%;
-			transition:.2s;
-		}
-		&:hover{
-			img{
-				transform:scale(1.08);
-			}
-		}
-	}
-	.user-info{
-		margin-top:0;
-		font-size:14px;
-		border-left: none;
-		li{
-			height:40px;
-			line-height:40px;
-			padding-bottom:10px;
-			border-bottom: 1px solid #f1f1f1;
-			&:nth-child(even){
-				background:@lightGrey;
-			}
-		}
-		span{
-			font-weight:900;
-   			color: #a9a9a9;
-		}
-		i{
-			color:#ff5a33;
-			text-shadow: 0 0 2px #400000;
-		}
-	}
-	.ueser-project{
-		h2{
-			margin-top:60px;
+	.user-project{
+		.base-title{
+			margin-top:50px;
 		}
 	}
 	.project-platform{
-		height:400px;
+		height:388px;
 		border:1px solid #e8e8e8;
 		border-radius:3px;
 		&:nth-child(1){
@@ -90,6 +23,10 @@
 		img{
 			width:100%;
 		}
+		ul{
+			padding-bottom:19px;
+			border-bottom:1px solid #f3f3f3;
+		}
 		li{
 			color:#999;
 			&:first-child{
@@ -104,5 +41,35 @@
 	}
 	.platform-container{
 		padding:13px;
+		.platfrom-entrance{
+			width:68%;
+			height:40px;
+			margin:20px auto 0;
+			border-radius:6px;
+			background-color:#222;
+			line-height:40px;
+			text-align:center;
+			background-color:@darkenBlue;
+			color:#eee;
+			.hoverColor(@darkenBlue);
+			.ent-detail{
+				font-size:18px;
+				letter-spacing:1px;
+			}
+			i{
+				margin-right:5px;
+				transform:translateY(1px);
+			}
+		}
+	}
+	.project-tab{
+		margin-top:25px;
+		li{
+			border-radius:2px;
+			&.ant-pagination-item-active{
+				background-color:@darkenBlue;
+				border-color:@darkenBlue;
+			}
+		}
 	}
 }

@@ -1,21 +1,10 @@
 import request from 'superagent';
-import {doLink} from '../link/Action';		//处理未登录时设置全局currentLink
-import {hashHistory} from 'react-router';	//路由机制
-import {message} from 'antd'; 				//antd组件
-
-//请求host地址
-const REQUEST_BASE_URL = "http://101.200.129.112:9527";
-//各请求地址
-const API = {
-	INIT  	 : '/deploy/init/', 	 //初始化用于检测是否登录
-	LOGIN 	 : '/deploy/login/', 	 //登录
-	LOGINOUT : '/deploy/logout/', 	 //登出
-	USER     : '/deploy/user/',
-	DETAIL   : '/deploy/detail/',
-    DEPLOY : '/deploy/deploy/',
-    BRANCH : '/deploy/branch/'
-}
-
+// import {message} from 'antd'; 				//antd组件
+import {cookieMiddleware} from '../cookieMiddleware'	//中间件
+import {
+	REQUEST_BASE_URL,
+	API
+} from '../requestApi/requestApi';        	//各类请求的Api地址以及请求根地址
 
 /*
  * 获取用户是否登录
@@ -38,22 +27,8 @@ const setOtherUser = otherList => ({
 	otherList	
 })
 
-//用于远程服务器是否登录的验证,如果没有登录则跳转至登录页面,并提示优先登录
-const cookieMiddleware = dispatch => res => {
-	res = res.body;
-	return new Promise((solve,reject) => {
-		if(res.hasOwnProperty("noLogin") && res.noLogin){
-			dispatch(doLink('login'));
-			hashHistory.push('login');
-			reject("没有登录");
-			message.warning('麻烦请先登录');
-			return;
-		} 
-		solve(res);
-	})
-}
 //检测已登录后设置全局用户属性
-export const initLogin = query => dispatch =>{
+export const initLogin = () => dispatch =>{
 	request
 		.get(REQUEST_BASE_URL + API.INIT)
 		.withCredentials()
@@ -68,16 +43,13 @@ export const initLogin = query => dispatch =>{
 			}));
 			dispatch(setOtherUser(res.users));
 		})
-		.catch(err => {
-			console.error(err);
-		})
+		.catch(err => console.error(err));
 }
-
 
 /*
  * 获取用户是否登录
  * 返回noLogin的布尔值,result示例:{noLogin: true, error: "please login"}
- * 如果成功触发initLogin获取资源
+ * 如果成功触发initLogin获取资源,之后将在一段时间内请求带有cookie
  */
 
 export const DO_LOGIN = "DO_LOGIN";
@@ -94,3 +66,4 @@ export const doLogin = (query,sucess,fail) => dispatch =>{
 			dispatch(initLogin());
 		})
 }
+
