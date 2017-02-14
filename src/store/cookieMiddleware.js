@@ -7,7 +7,7 @@ export const cookieMiddleware = dispatch => res => {
 	res = res.body;
 	return new Promise((solve,reject) => {
 		if(res.hasOwnProperty("noLogin") && res.noLogin){
-			dispatch(doLink('login'));
+			dispatch(doLink('login')); 		//处理侧导航高亮store
 			hashHistory.push('login');
 			reject("没有登录");
 			message.warning('麻烦请先登录');

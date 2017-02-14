@@ -97,18 +97,48 @@
 			}
 		}
 	}
-}
-.ant-modal-content{
-	@dangerColor : #bf2b2b;
-	button{
+	.folder-contral{
+		height:160px;
+		.folder-perview{
+			width:147px;
+			height:128px;
+			margin-top:28px;
+			margin-left:13px;
+		}
+	}
+	.current-title{
+		font-size:12px;
 		letter-spacing:1px;
-		&:last-child{
-			background-color:@dangerColor;
-			border-color:@dangerColor;
+		span{
+			margin-left:3px;
+		}
+		&.currentFolder{
+			margin-top:16px;
+		}
+		&.currentBranch,&.currentCommit{
+			margin-top:6px;
+		}
+	}
+	.button-group{
+		margin-top:40px;
+		@btn-color:#404040;
+		button{
+			background-color:@btn-color;
+			border-color:@btn-color;
+			&:not(:last-child){
+				margin-right:15px;
+			}
 			&:hover{
-				background-color:darken(@dangerColor,10%);
+				background-color:darken(@btn-color,10%)
 			}
 		}
+	}
+}
+.ant-modal-content{
+
+	button{
+		letter-spacing:1px;
+	
 	}
 }
 .modelKey{

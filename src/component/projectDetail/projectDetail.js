@@ -3,8 +3,11 @@ import {connect} from 'react-redux';					//链接view以及store
 import {hashHistory} from 'react-router';				//路由跳转
 import {
 	setProDetail,
-	selectFolder
-} from '../../store/projectDetail/Action';		//用于侧导航显示行为
+	selectFolder,
+	selectBranch,
+	commitBack,
+	pullRemoteBranch
+} from '../../store/projectDetail/Action';				//用于处理各请求的行为
 import {bindActionCreators} from 'redux';       	    //用于链接异步redux的dispacth
 import {
     Row,
@@ -12,6 +15,7 @@ import {
     Button,
     Icon,
     Modal,
+    message,
 } from 'antd';											//antd组件
 import './projectDetail.less';
 
@@ -43,7 +47,8 @@ class ProjectDetail extends Component{
 	//项目描述若问description则直接显示为...
 	render(){
 		if(!Object.keys(this.props.projectDetail).length) return(<div></div>);
-		let {name,folders,local_branches,remote_branches,description,active_branch,commit_info,deploy} = this.props.projectDetail;
+		let {name,folders,local_branches,remote_branches,description,active_branch,commit_info,deploy,url} = this.props.projectDetail;
+		let isCommit = this.state.modelType === "commitModle";
 		return(
 			<article className="ProjectDetail baseWrapper">
 				<section className="project-data">
@@ -66,7 +71,30 @@ class ProjectDetail extends Component{
 					</Row>
 				</section>
 				<section className="project-commit">
-					<h2 className="base-title"><span>2</span>版本回退</h2>
+					<h2 className="base-title"><span>2</span>文件操作</h2>
+					<div className="folder-contral">
+						<Row>
+							<Col span={6}>
+								<div className="folder-perview">
+									<img src={require(`./image/folder-2.png`)}/>
+								</div>
+							</Col>
+							<Col span={16}>
+								<div className="current-title currentFolder">当前文件名称 :<span>{deploy}</span></div>
+								<div className="current-title currentBranch">当前项目分支 :<span>{active_branch}</span></div>
+								<div className="current-title currentCommit">当前项目版本 :<span>{this.getCommitTime(commit_info[commit_info.length-1].time,Date.prototype.toLocaleString)}</span></div>
+								<div className="button-group">
+									<Button type="primary" onClick={()=>this.handlePull()}>更新远程至本地仓库</Button>
+								    <Button type="primary">在本地云盘上线</Button>
+								    <Button type="primary"><a href={url} target="blank">预览git仓库</a></Button>
+								    <Button type="primary">预览本地云盘</Button>
+								</div>
+							</Col>
+						</Row>
+					</div>
+				</section>
+				<section className="project-commit">
+					<h2 className="base-title"><span>3</span>版本选择</h2>
 					<div className="commit-step">
 						<ul>
 							{this.getCommitStep(commit_info)}
@@ -74,9 +102,16 @@ class ProjectDetail extends Component{
 					</div>
 				</section>
 				<Modal title="Commit-版本信息" visible={this.state.modelVisible}
-		          onOk={()=>this.handleSubmit()} onCancel={()=>this.cancelModal()}
-		          okText ={this.state.modelType == 'commitModle'?'回退该版本':'确定'} iconType='up-circle'
-		          >
+					closable={!this.state.loading} onCancel={()=>this.cancelModal()}
+		            footer={[
+			            <Button disabled={this.state.loading} key="back" size="large" onClick={()=>this.cancelModal()}>返回</Button>,
+			            <Button key="submit" 
+			            	type="primary" 
+			            	size="large" loading={this.state.loading}
+			            	onClick={()=>this.handleSubmit()}>{isCommit?"选择该版本":"确定"}
+			            </Button>
+		          	]}
+		        >
 		          {this.modelDetail()}
 		        </Modal>
 			</article>
@@ -114,8 +149,16 @@ class ProjectDetail extends Component{
 		</li>)
 	}
 	//获取时间戳函数,根据传进来的fn调用不同函数达到是否获取详细日期-时间或仅仅日期
+	//匹配上午或者下午至am或者pm
 	getCommitTime(date,fn){
-		return fn.call(new Date(date*1000));
+		return fn.call(new Date(date*1000)).replace(/上午|下午/g,$0 => {
+			switch($0){
+				case '上午':
+					return 'am-';
+				case '下午': 
+					return 'pm-';
+			}
+		});
 	}
 	//负责弹出层组件的渲染内容,数据来自state.modelCommitInfo
 	modelDetail(modelDate){
@@ -123,16 +166,23 @@ class ProjectDetail extends Component{
 		let {modelCommitInfo,modelPrompt} = this.state;
 		if(null === modelType || modelType == 'commitModle' && !Object.keys(modelCommitInfo).length) return;
 		switch(modelType){
+			case 'folderModle' :
+				return this.renderPromptModel(modelPrompt,'您是否要切换','为上传文件');
+			case 'brancheModle' :
+				return this.renderPromptModel(modelPrompt,'您是否要切换','为本地分支');
+			case 'pullModle'  :
+				return this.renderPromptModel(modelPrompt,'您是否确定要更新远程仓库至本地仓库');
 			case 'commitModle':
 				return this.renderCommitModle(modelCommitInfo);
-			case 'folderModle' :
-				return this.renderPromptModel(modelPrompt,'为上传文件');
-			case 'brancheModle' :
-				return this.renderPromptModel(modelPrompt,'为本地分支');
 			default :
 				return (<p></p>)
 		}
 	}
+	//渲染模态框的切换分支以及文件的展示
+	renderPromptModel(promptDate,str1='',str2=''){
+		return (<p className="modelPrompt">{str1}<span>{promptDate}</span>{str2}</p>)
+	}
+	//渲染模态框的切换commit版本号的详细信息展示
 	renderCommitModle(modelDate){
 		let data = {
 			'推送者': modelDate.author.name,
@@ -147,18 +197,22 @@ class ProjectDetail extends Component{
 		}
 		return arr;
 	}
-	renderPromptModel(promptDate,str){
-		return (<p className="modelPrompt">您是否要切换<span>{promptDate}</span>{str}</p>)
-	}
+	//进行点击文件已经为当前active文件,不是才弹出模态框
 	handleFolders(value){
 		if(this.props.projectDetail.deploy == value) return;
 		this.showModal(value,'folderModle')
 	}
+	//进行点击分支已经为当前active文件,不是才弹出模态框
 	handleBranches(value){
 		if(this.props.projectDetail.active_branch == value) return;
 		this.showModal(value,'brancheModle')
 	}
-	//antd组件展示model框
+	handlePull(){
+		this.showModal('','pullModle');
+	}
+	//antd组件展示model框,根据点击传参的modelType设置当前的modelType
+	//如果传入data为string[文件以及分支切换]的提示信息则设置modelPrompt
+	//如果data为对象,说明是commit分支的点击需要设置modelCommitInfo
 	showModal(data,modelType) {
 		let state = 'string' === typeof data?{modelPrompt:data}:{modelCommitInfo:data};
 	    this.setState({
@@ -173,32 +227,47 @@ class ProjectDetail extends Component{
 	      modelVisible: false,
 	    });
 	}
-	//antd组件用于回退版本号的点击
+	//antd组件的提交按钮!根据modelType判断,用于最后发送数据,以及传入成功回调以及成功提示信息
 	handleSubmit() {
+		if(this.state.loading) return;
 		let{name} = this.props.params;
 		let{modelType,modelCommitInfo,modelPrompt} = this.state;
 	    switch(modelType){
-	    	case 'folderModle' :
-	    		this.props.selectFolder({repo_id:name,deploy:modelPrompt},this.handleLoading.bind(this));
-	    		this.setState({loading:true});
+	    	case 'folderModle'  :
+	    		this.props.selectFolder({repo_id:name,deploy:modelPrompt},this.handleLoadingEnd.bind(this,`成功切换文件为${modelPrompt}`));
+	    		break;
+	    	case 'brancheModle' :
+	    		this.props.selectBranch({repo_id:name,branch:modelPrompt},this.handleLoadingEnd.bind(this,`成功切换本地分支为${modelPrompt}`))
+	    		break;
+	    	case 'pullModle'  :
+				this.props.pullRemoteBranch({repo_id:name},this.handleLoadingEnd.bind(this,'成功更新远程仓库至本地'));
+				break;
+	    	case 'commitModle'  :
+	    		this.props.commitBack({repo_id:name,sha:modelCommitInfo.sha},this.handleLoadingEnd.bind(this,`成功回退版本至${modelCommitInfo.sha}`))
 	    		break;
 	    }
+	    this.setState({loading:true});
 	}
-	handleLoading(){
+	//成功后进行回调关闭loading以及模态框
+	handleLoadingEnd(str){
 		this.setState({loading:false,modelVisible:false});
+		message.success(str);
 	}
 }
 
+//projectDetail数据
 const getDataProps = state => ({
-	projectDetail : state.projectDetail
+	projectDetail : state.projectDetail,
 });
 
 //链接方法
 const setFnProps = dispatch => ({
   dispatch,
-  setProDetail:bindActionCreators(setProDetail,dispatch),
-  selectFolder:bindActionCreators(selectFolder,dispatch)
+  setProDetail     :bindActionCreators(setProDetail,dispatch),
+  selectFolder     :bindActionCreators(selectFolder,dispatch),
+  selectBranch     :bindActionCreators(selectBranch,dispatch),
+  commitBack       :bindActionCreators(commitBack,dispatch),
+  pullRemoteBranch :bindActionCreators(pullRemoteBranch,dispatch),
 })
-
-
+//链接数据层
 export default connect(getDataProps,setFnProps)(ProjectDetail);

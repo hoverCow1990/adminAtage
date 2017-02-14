@@ -9,5 +9,8 @@ export const API = {
 	DETAIL     : '/deploy/detail/',	     //项目信息
     DEPLOY     : '/deploy/deploy/',
     BRANCH     : '/deploy/branch/',
-    EDITDEPLOY : '/deploy/editDeploy/',
+    CHECKOUT   : '/deploy/checkout/',	 //切换远程分支
+    EDITDEPLOY : '/deploy/editDeploy/',	 //切换需要上传的文件
+    RESET      : '/deploy/reset/',       //切换commit
+    PULL 	   : '/deploy/pull/',		 //更新远程仓库至本地
 }
