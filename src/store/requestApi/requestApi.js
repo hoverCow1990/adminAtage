@@ -7,10 +7,11 @@ export const API = {
 	LOGINOUT   : '/deploy/logout/', 	 //登出
 	USER       : '/deploy/user/',		 //用户信息
 	DETAIL     : '/deploy/detail/',	     //项目信息
-    DEPLOY     : '/deploy/deploy/',
-    BRANCH     : '/deploy/branch/',
+    DEPLOY     : '/deploy/deploy/',      //本地文件上线
+    BRANCH     : '/deploy/branch/',      //将远程分支拉复制到本地
     CHECKOUT   : '/deploy/checkout/',	 //切换远程分支
     EDITDEPLOY : '/deploy/editDeploy/',	 //切换需要上传的文件
     RESET      : '/deploy/reset/',       //切换commit
     PULL 	   : '/deploy/pull/',		 //更新远程仓库至本地
+    CLONE      : '/deploy/clone/'        //克隆一个git项目
 }

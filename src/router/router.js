@@ -8,6 +8,8 @@ import {
 import LoginPage from '../component/login/login';
 import HomePage from '../component/homePage/homePage';
 import ProjectDetail from '../component/projectDetail/projectDetail';
+import FileCloud from '../component/fileCloud/fileCloud';
+import OtherPage from '../component/otherPage/otherPage';
 
 class MainRouter extends Component{
   constructor(){
@@ -21,6 +23,10 @@ class MainRouter extends Component{
               <Route path="/login"    component={LoginPage}/>
               <Route path="homePage/:name" component={ProjectDetail}/>
               <Route path="homePage" component={HomePage} />
+              <Route path="fileCloud(/**)" component={FileCloud} />
+              <Route path="otherPage/:id/:name" component={ProjectDetail} />
+              <Route path="otherPage/:id" component={HomePage} />
+              <Route path="otherPage" component={OtherPage} />
           </Route>
         </Router>
       )

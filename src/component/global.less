@@ -3,8 +3,25 @@
 .baseWrapper{
 	padding:20px 40px 0 40px;
 	//个人主页项目页标题
+	.title-wrapper{
+		height:40px;
+		padding-bottom:6px;
+		padding-top:6px;
+		&.title-next{
+			margin-top:30px;
+			margin-bottom:18px;
+		}
+	}
+	.base-link,
+	.base-add{
+		width:69px;
+		height:100%;
+		float:right;
+	}
 	.base-title{
 		display:flex;
+		width:60%;
+		float:left;
 		align-items:center;
 		text-shadow:0 0 1px rgba(0,0,0,.3);
 		i{
@@ -12,9 +29,6 @@
 			text-shadow:0 0 1px #999;
 		}
 		font-size:16px;
-		padding-bottom:6px;
-		padding-top:6px;
-		margin-bottom:15px;
 		letter-spacing:1px;
 		transition:.2s;
 		span{
@@ -101,7 +115,7 @@
 			&:nth-child(even){
 				background:@lightGrey;
 			}
-			&:nth-child(2),&:nth-child(3){
+			&:nth-child(2),&:nth-child(3),&:nth-child(4){
 				span:not(.tag):hover{
 	   				color:#000;
 	   				cursor:pointer;
@@ -137,4 +151,4 @@
 			color:#ff5a33;
 			text-shadow: 0 0 2px #400000;
 		}
-	}
+}

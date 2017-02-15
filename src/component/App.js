@@ -88,10 +88,10 @@ class App extends Component{
             <Col span={4}>
               <SlideNav/>
             </Col>
-            <Col span={12}>
+            <Col span={13}>
               <MainRouter/>
             </Col>
-            <Col span={8}>
+            <Col span={7}>
               3
             </Col>
           </Row>

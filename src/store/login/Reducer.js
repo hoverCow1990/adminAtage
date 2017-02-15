@@ -3,6 +3,8 @@ import {
 	INIT_LOGIN,
 	DO_LOGIN,
 	SET_OTHER_USER,
+	DO_LOGOUT,
+	CLONE_PRO
 } from './Action';
 
 //对登录用户的信息,以及其他用户文件信息进行管理
@@ -23,6 +25,10 @@ export const adminData = (state = defaultState.adminData,action) =>{
 				{...action.data});
 		case DO_LOGIN : 
 			return Object.assign({},state);
+		case DO_LOGOUT :
+			return defaultState.adminData;
+		case CLONE_PRO :
+			return Object.assign({},state,{project:action.project});
 		default :
 			return state;	
 	}

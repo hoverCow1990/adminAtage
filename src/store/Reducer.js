@@ -6,13 +6,17 @@ import {
 import {
 	projectDetail,
 } from './projectDetail/Reducer';
-import {currentLink} from './link/Reducer';
+import {
+	currentLink,
+	currentPagination
+} from './link/Reducer';
 
 const reducer = combineReducers({
 	currentLink,
 	adminData,
 	otherUser,
-	projectDetail
+	projectDetail,
+	currentPagination
 })
 
 export default reducer;

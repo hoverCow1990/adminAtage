@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
 import {connect} from 'react-redux';            //connect
+import {bindActionCreators} from 'redux';             //用于链接异步redux的dispacth
 import {
     Row,
     Col,
@@ -9,6 +10,9 @@ import {
 import {
   doLink      
 } from '../../store/link/Action'                //用于按钮链接改变侧导航currentLink
+import {
+  doLogout      
+} from '../../store/login/Action'                //用于按钮链接改变侧导航currentLink
 import {hashHistory} from 'react-router';
 import {ADMIN_MAX_STAR} from '../../setting/setting';
 
@@ -30,7 +34,7 @@ class WelcomeContent extends Component{
         <figure className="loginSucess">
           <Row >
             <Col span={9} className="sucess-perview">  
-              <img className="feature" src ={require("../image/master.jpg")}/>   
+              <img className="feature" src ={'http://www.web-jackiee.com/templets/blog/demo/publicImage/adminAtage/master-'+id+'.jpg'}/>   
             </Col>
             <Col span={14} offset={1}>
               <ul className="user-info">
@@ -45,11 +49,11 @@ class WelcomeContent extends Component{
                   <span className="tri tri-1"></span><span className="tri tri-2"></span><Icon type="home" />
                   我的首页
                 </Button>
-                <Button type="primary">
+                <Button type="primary" onClick={()=>this.doLink("otherPage")}>
                 <span className="tri tri-1"></span><span className="tri tri-2"></span><Icon type="share-alt" />
-                  其他用户
+                  所有用户
                 </Button>
-                <Button type="primary">
+                <Button type="primary" onClick={()=>this.doLogout()}>
                   <span className="tri tri-1"></span><span className="tri tri-2"></span><Icon type="poweroff" />
                   退出登录
                 </Button>
@@ -63,6 +67,10 @@ class WelcomeContent extends Component{
   doLink(path){
     this.props.dispatch(doLink(path))
     hashHistory.push(path);
+  }
+  //退出登录
+  doLogout(){
+    this.props.doLogout();
   }
   //匹配github地址
   getGitUrl(pro){
@@ -83,5 +91,10 @@ const setDateProps = state => ({
     adminData : state.adminData
 })
 
+const setDateFn = dispatch => ({
+    dispatch : dispatch,
+    doLogout : bindActionCreators(doLogout,dispatch),
+})
 
-export default connect(setDateProps)(WelcomeContent);
+
+export default connect(setDateProps,setDateFn)(WelcomeContent);

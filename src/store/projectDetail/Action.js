@@ -26,10 +26,10 @@ export const setProDetail = query => dispatch => {
 		.withCredentials()
 		.then(cookieMiddleware(dispatch))
 		.then(res=>{
-			res.commit_info.reverse();
+			//res.commit_info.reverse();
 			dispatch(setProDetailData(res));
 		})
-		.catch(err => console.error(err))
+	
 }
 
 /*
@@ -40,7 +40,7 @@ export const setProDetail = query => dispatch => {
  * 所以选择直接dispatchProDetailData刷新完整数据
  */
 
-export const selectFolder = (query,cb) => dispatch => {
+export const selectFolder = (query,success,fail) => dispatch => {
 	request
 		.get(REQUEST_BASE_URL + API.EDITDEPLOY)
 		.query(query)
@@ -48,9 +48,9 @@ export const selectFolder = (query,cb) => dispatch => {
 		.then(cookieMiddleware(dispatch))
 		.then(res => {
 			dispatch(setProDetailData(res));
-			cb && cb();
+			success && success();
 		})
-		.catch(err => console.error(err))
+		.catch(err => fail&&fail())
 }
 
 /*
@@ -59,7 +59,7 @@ export const selectFolder = (query,cb) => dispatch => {
  * 返回一个和setProDetailData一致的数据
  */
 
- export const selectBranch = (query,cb) => dispatch => {
+ export const selectBranch = (query,success,fail) => dispatch => {
  	request
  		.get(REQUEST_BASE_URL + API.CHECKOUT)
  		.query(query)
@@ -67,10 +67,29 @@ export const selectFolder = (query,cb) => dispatch => {
  		.then(cookieMiddleware(dispatch))
  		.then(res => {
  			dispatch(setProDetailData(res));
-			cb && cb();
+			success && success();
  		})
- 		.catch(err =>console.error(err))
+ 		.catch(err => fail&&fail())
  }
+
+/*
+ * 将远程分支拉倒本地
+ * 发送数据query为{repo_id:id,branch:branch[string]}
+ * 返回一个和setProDetailData一致的数据
+ */
+
+export const checkoutRemoteBranch = (query,success,fail) => dispatch => {
+	request
+ 		.get(REQUEST_BASE_URL + API.BRANCH)
+ 		.query(query)
+ 		.withCredentials()
+ 		.then(cookieMiddleware(dispatch))
+ 		.then(res => {
+ 			dispatch(setProDetailData(res));
+			success && success();
+ 		})
+ 		.catch(err => fail&&fail())
+}
 
  /*
  * 回退到某个版本
@@ -78,7 +97,7 @@ export const selectFolder = (query,cb) => dispatch => {
  * 返回一个和setProDetailData一致的数据
  */
 
-export const commitBack = (query,cb) => dispatch => {
+export const commitBack = (query,success,fail) => dispatch => {
 	request
 		.get(REQUEST_BASE_URL + API.RESET)
 		.query(query)
@@ -86,9 +105,9 @@ export const commitBack = (query,cb) => dispatch => {
 		.then(cookieMiddleware(dispatch))
 		.then(res => {
 			dispatch(setProDetailData(res))
-			cb && cb();
+			success && success();
 		})
-		.catch(err => console.error(err));
+		.catch(err => fail&&fail());
 }
 
 /*
@@ -97,7 +116,7 @@ export const commitBack = (query,cb) => dispatch => {
 * 返回一个和setProDetailData一致的数据
 */
 
-export const pullRemoteBranch = (query,cb) => dispatch =>{
+export const pullRemoteBranch = (query,success,fail) => dispatch =>{
 	request
 		.get(REQUEST_BASE_URL + API.PULL)
 		.query(query)
@@ -105,7 +124,28 @@ export const pullRemoteBranch = (query,cb) => dispatch =>{
 		.then(cookieMiddleware(dispatch))
 		.then(res => {
 			dispatch(setProDetailData(res))
-			cb && cb();
+			success && success();
 		})
-		.catch(err => console.error(err));
+		.catch(err => fail&&fail());
 }
+
+/*
+* 文件本地上线
+* 发送数据query为{repo_id:id}
+* 返回一个和setProDetailData一致的数据
+*/
+
+export const deployFolder = (query,success,fail) => dispatch =>{
+	request
+		.get(REQUEST_BASE_URL + API.DEPLOY)
+		.query(query)
+		.withCredentials()
+		.then(cookieMiddleware(dispatch))
+		.then(res => {
+			dispatch(setProDetailData(res))
+			success && success();
+		})
+		.catch(err => fail&&fail());
+}
+
+

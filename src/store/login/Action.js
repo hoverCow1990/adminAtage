@@ -20,13 +20,6 @@ const initLoginData = data => ({
 	data
 });
 
-//获取其他用户信息
-export const SET_OTHER_USER = "SET_OTHER_USER";
-const setOtherUser = otherList => ({
-	type : 	SET_OTHER_USER,
-	otherList	
-})
-
 //检测已登录后设置全局用户属性
 export const initLogin = () => dispatch =>{
 	request
@@ -41,13 +34,14 @@ export const initLogin = () => dispatch =>{
 				id,
 				project
 			}));
-			dispatch(setOtherUser(res.users));
+			dispatch(setOtherUserDate(res.users));
 		})
 		.catch(err => console.error(err));
 }
 
 /*
  * 获取用户是否登录
+ * query一个{name,password}
  * 返回noLogin的布尔值,result示例:{noLogin: true, error: "please login"}
  * 如果成功触发initLogin获取资源,之后将在一段时间内请求带有cookie
  */
@@ -67,3 +61,71 @@ export const doLogin = (query,sucess,fail) => dispatch =>{
 		})
 }
 
+/*
+ * 用户登出,不需要传入任何query
+ */
+
+export const DO_LOGOUT  = "DO_LOGOUT";
+export const doLogoutData = () => ({
+	type : DO_LOGOUT ,
+});
+
+export const doLogout = () => dispatch => {
+	request
+		.get(REQUEST_BASE_URL + API.LOGINOUT)
+		.withCredentials()
+		.end((err,res) => {
+			if(err) throw new Error(err);
+			dispatch(doLogoutData());
+		})
+}
+
+/*
+ * 获取其他用户信息
+ */
+
+export const SET_OTHER_USER = "SET_OTHER_USER";
+const setOtherUserDate = otherList => ({
+	type : 	SET_OTHER_USER,
+	otherList	
+})
+
+export const setOtherUser = () => dispatch => {
+	request
+		.get(REQUEST_BASE_URL + API.INIT)
+		.withCredentials()
+		.then(cookieMiddleware(dispatch))
+		.then(res => {
+			dispatch(setOtherUserDate(res.users))
+		})
+		.catch(err => console.error(err));
+}
+
+/*
+ * 克隆一个git地址
+ * query一个地址以及文件名{url,name}
+ * 返回
+ */
+
+export const CLONE_PRO = "CLONE_PRO";
+const cloneProDate = project => ({
+	type : 	CLONE_PRO,
+	project
+})
+
+export const clonePro = (query,success,fail) => dispatch => {
+	request
+		.get(REQUEST_BASE_URL + API.CLONE)
+		.query(query)
+		.withCredentials()
+		.then(cookieMiddleware(dispatch))
+		.then(res => {
+			console.log('1'+res.admin);
+			console.log('2'+res.admin.project);
+			dispatch(cloneProDate(res.admin.project))
+			success&&success();
+		})
+		.catch(err => {
+			fail&&fail();
+		});
+}

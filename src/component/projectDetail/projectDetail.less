@@ -34,11 +34,6 @@
 			}
 		}
 	}
-	.project-commit{
-		.base-title{
-			margin-top:50px;
-		}
-	}
 	.commit-step{
 		@size:60px;
 		li{
@@ -81,11 +76,13 @@
 				}
 			}
 			.info{
+				width:100px;
 				float:left;
 				margin-left:20px;
 				p{
 					padding-top:1px;
 					padding-bottom:2px;
+					.hiddenText();
 					&:first-child{
 						border-bottom:1px solid #e8e8e8;
 					}
@@ -134,11 +131,21 @@
 		}
 	}
 }
+.ant-alert-error{
+	width:80%;
+	margin:100px auto;
+	.ant-alert-message{
+		font-weight:bold;
+	}
+	.ant-alert-description{
+		margin-top:10px;
+		font-size:13px;
+		letter-spacing:1px;
+	}
+}
 .ant-modal-content{
-
 	button{
 		letter-spacing:1px;
-	
 	}
 }
 .modelKey{
