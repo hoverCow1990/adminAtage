@@ -15,8 +15,6 @@ body{
 	background-size:cover;
 }
 .viewWrapper{
-	display:flex;
-	justify-content:center;
 	width:100%;
 	height:100%;
 }

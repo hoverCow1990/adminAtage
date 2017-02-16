@@ -66,7 +66,7 @@ class HomePage extends Component{
 								<img src={'http://www.web-jackiee.com/templets/blog/demo/publicImage/adminAtage/master-'+id+'.jpg'}/>
 							</div>
 						</Col>
-						<Col span={12}>
+						<Col span={13}>
 							<ul className="user-info info-list">
 				                <li><span className="tag">用户id:</span><span>{`000${id}`.slice(-4)}</span></li>
 				                <li><span className="tag">用户姓名:</span><span>{name}</span></li>

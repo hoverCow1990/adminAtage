@@ -64,7 +64,7 @@ class ProjectDetail extends Component{
 				<section className="project-data">
 					<div className='title-wrapper'>
 						<h2 className="base-title"><span>1</span>项目信息</h2>
-						<div className='base-link'><Button type="dashed">back</Button></div>
+						<div className='base-link'><Button type="dashed" onClick={()=>{hashHistory.push('homePage')}}>back</Button></div>
 					</div>
 					<Row>
 						<Col span={6}>
@@ -83,7 +83,7 @@ class ProjectDetail extends Component{
 						</Col>
 					</Row>
 				</section>
-				<section className="project-commit">
+				<section className="project-contral">
 					<div className='title-wrapper title-next'>
 						<h2 className="base-title"><span>2</span>文件操作</h2>
 					</div>
