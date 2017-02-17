@@ -1,22 +1,29 @@
-import React from 'react';
-import './menu.css';
+import React,{Component} from 'react';
+import './menu.less';
 
 
-const Menu = React.createClass({
-	render(){
-		const nodes = this.props.menuLi.map(function(item){
-			return (
-					<li key={item[0]} onMouseDown={(e)=>item[1](e)}>{item[0]}</li>
-				)
-		});
-		return (
-			<div className="myMenuList" style={{display:this.props.dis?"block":"none",top:this.props.y,left:this.props.x}}>
-				<ul>
-					{nodes}
-				</ul>
-			</div>
-		)
+
+class Menu extends Component{
+	constructor(){
+		super();
 	}
-});
+	render(){
+		let {display,x,y} = this.props.menuPos;
+		return (
+			<div className="myMenuList" style={{display:display,top:y,left:x}}>
+				<ul>
+					{this.renderLi(this.props.menuData)}
+				</ul>
+			</div>)
+	}
+	renderLi(data){
+		return data.map((item,index) => 
+			<li key={index} onMouseDown={(e)=>item.fn(e)}>
+				{item.name}
+			</li>)
+	}
+}
+
+
 
 export default Menu;

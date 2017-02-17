@@ -1,325 +1,299 @@
-import React from 'react';
-import { message, Modal, Button} from 'antd';
-import { 
-  hashHistory,
-} from 'react-router';
-import './fileCloud.css';
-import BreadList from "./breadList/breadList.js";
+import React,{Component} from 'react';
+import {connect} from 'react-redux';					//链接view以及store
+import {bindActionCreators} from 'redux';       	    //用于链接异步redux的dispacth
+import {hashHistory} from 'react-router';
+// import BreadList from "./breadList/breadList.js";
 import FileList from "./fileList/fileList.js";
-import {getFileList,reName,newFolder,removeFile,pasteCopyFile,pasteCutFile} from "./fileApi/fileApi.js";
+// import {getFileList,reName,newFolder,removeFile,pasteCopyFile,pasteCutFile} from "./fileApi/fileApi.js";
 import Menu from "./menu/menu.js";
+import {
+	initLogin
+} from '../../store/login/Action';				//用于是否登录超时
+import {
+	getCloudInit,
+	newCloudFolder,
+	renameCloudFolder,
+	removeCloudFolder,
+	pasteCopyFolder,
+	pasteCutFolder
+} from '../../store/fileCloud/Action';				//用于处理各请求的行为
+import {
+	Spin,
+    Button,
+    Modal,
+    message
+} from 'antd';
+import './fileCloud.less';
 
-const confirm = Modal.confirm;
 
-const FileCloud=React.createClass({
-	getInitialState(){
-		return {
-			path : [],
-			file : [],
-			loading : false,
-			loaction : "http://101.200.129.112:9527/",
-			menuDis : false,
-			menuLi : [],
-			menuPos : {
-				x : 20,
-				y : 100
+class FileCloud extends Component{
+	constructor(){
+		super();
+		this.state = {
+			admin : '',
+			getInitLoading : false,
+			files : [],
+			filePath : '',
+			activeFolder : {
+				name : '',
+				path : ''
 			},
-			copyItem : null,
-			cutItem : null,
-			renameInput : false,
-			activeFile : null,
-			renameValue : null,
+			pasteFolder : {
+				type : '',
+				path : ''
+			},
+			menu : {
+				pos : {display:'none',x:0,y:0},
+				data : []
+			},
+			modelVisible : false,
+			folderName : '',
+			handleType : '',		
+			requestTimer : new Date(),
 		}
-	},
+	}
+	//每次刷新路径或者页面进行用户是否登录超时检测,若超时返回登录界面
+	//以及获取当前路径文件
+	componentWillMount(){
+		this.getFileInIt(this.getNowPath());
+	}
 	render(){
+		// let {fileClouds} = this.props,
+		// 	fileList = fileClouds.files;
+		let {pos,data} = this.state.menu;
 		return (
-			<div className="fileWrapper" onContextMenu={(e)=>e.preventDefault()} onMouseDown={(e) => this.takeMenu(e,e.clientX,e.clientY)}>
-				<BreadList path={this.state.path}/ >
-				<FileList  path={this.state.path} file={this.state.file} mouseEvent={this.mouseEvent} renameInput = {this.state.renameInput} activeFile={this.state.activeFile} reNameSub={this.reNameSub} reNameEnd = {this.reNameEnd} reNameEvent={this.reNameEvent} renameValue={this.state.renameValue} newFileSub={this.newFileSub} endNewFile={this.endNewFile}/ >
-				<Menu dis={this.state.menuDis} x={this.state.menuPos.x} y={this.state.menuPos.y} menuLi={this.state.menuLi}/>
+			<div className='cloud-wrapper'>
+				<div className='initLoading' style={{display:this.state.getInitLoading?'flex':'none'}}><Spin spinning={this.state.getInitLoading}></Spin></div>
+				<article className='fileCloud baseWrapper' onContextMenu={e=>e.preventDefault()} onMouseDown={e => this.showMenu(e,'bg')}>
+					<div className='title-wrapper'>
+						<h2 className="base-title"><span>1</span>文件信息</h2>
+					</div>
+					<FileList fileList={this.state.files} showMenu={this.showMenu.bind(this)} hideMenu={this.hideMenu.bind(this)}/>
+					<Menu menuPos={pos} menuData={data}/>
+				</article>
+				<Modal title="请输入文件名" visible={this.state.modelVisible}
+					onCancel={()=>this.hideModal()}
+		            footer={[
+			            <Button key="back" size="large" onClick={()=>this.hideModal()}>返回</Button>,
+			            <Button key="submit" type="primary" size="large"
+			            	onClick={()=>this.handleSubmit()}>确定
+			            </Button>
+		          	]}
+		        >
+		         	<div className="cloneForm">
+		         		<div><p>文件名:</p><input type='text' onChange={(e) => this.setState({folderName:e.target.value})} /></div>
+		         	</div>
+		        </Modal>
 			</div>
 		)
-	},
-	componentDidMount(){
-		console.log(1);
-		const {params} = this.props;     //this.props.params.splat为当前#/后的路径
-		const {splat} = params;
-		this.getFile(splat);
-	},
-	componentWillReceiveProps(nextProps){
-		const {params} = nextProps
-        const {splat} = params
-		this.getFile(splat);
-	},
-	takeMenu(e,x,y){
-		console.log(x);
-		const This = this;
-		if(e.button == 2){
-			this.setState({
-				menuDis : true,
-				menuPos : {
-					x : x,
-					y : y
-				},
-				menuLi : [
-					["新建文件夹",This.newFile],
-					["黏贴",This.paste],
-				],
-				renameInput : false,
-			})
-		}else if(e.button == 0){
-			this.setState({
-				menuDis : false,
-				activeFile : null,
-			})
-		}
-	},
-	mouseEvent(e,path,isFolder,name){
-		e.stopPropagation();
-		e.preventDefault();
-		const This = this;
-		if(e.button == 2){
-			this.setState({
-				menuDis : true,
-				menuPos : {
-					x : e.clientX,
-					y : e.clientY
-				},
-				menuLi : [
-					["新建文件夹",This.newFile],
-					["重命名",This.renameDis],
-					["删除",This.removeFile],
-					["复制",This.copy],
-					["剪切",This.cut],
-				],
-				renameInput : false,
-				renameValue : null,
-				activeFile : name,
-			})		}else if(e.button == 0){
-			if(this.state.renameInput) return;
-			isFolder?hashHistory.push("/fileCloud/"+path):window.open(this.state.loaction+"static/"+path);
-			this.setState({
-				menuDis : false,
-				activeFile : null,
-			})
-		}
-	},
-	reNameEvent(val){
-		this.setState({
-			renameValue : val,
+	}
+	//当页面路由发生变化时进行是否超时登录以及获取当前路径的文件信息
+	//nowTimer用来避免由于变化路径时发生的多次请求
+	//最后刷新新的时间戳
+	componentWillReceiveProps(nextProps,a,b){
+		let path = this.getNowPath(nextProps),
+			nowTimer = new Date();
+		if(nowTimer-this.state.requestTimer<300) return;
+		this.setState({requestTimer:nowTimer})
+		this.getFileInIt(path);
+	}
+	//用于发送请求获取当前路径文件信息,并将结果放置于store中的fileClouds以及adminDate
+	//并且复制了一份存入当前state中
+	getFileInIt(path){
+		// console.log('请求');
+		//发起用户是否登录请求同时打开loading蒙版界面
+		let promise = new Promise((solve,reject) => {
+			this.setState({getInitLoading:true});
+			this.props.initLogin(solve,false);
 		})
-	},
-	getFile(path){
-		const This = this;
-		path = path||"";
-		getFileList(path,function(err){
-			throw new Error(err);
-		},function(res){
-			This.setState({
-				file : res.file,
-				path : res.path.split("/"),
-			});
-		});
-	},
-	renameDis(e) {
-		e.stopPropagation();
-		e.preventDefault();
-		if(e.button != 0) return;
-		this.setState({
-			menuDis : false,
-			renameInput : true,
-		})
-	},
-	reNameSub(path,value){
-		if(!value || this.state.activeFile == value){
-			this.setState({
-				renameInput : false,
-				activeFile : null,
-			});
-			return;
-		}
-		if(this.hasName(value)){
-			message.error("不得与其他文件重名,请更改");
-			return;
-		}
-		const file = this.state.file,
-		      This = this;
-		reName({
-			path : path,
-			name : value
-		},function(err){
-			return new Error(err);
-		},function(res){
-			var json = [];
-			file.map(function(obj){
-				if(obj.name == This.state.activeFile){
-					json.push(res)
-				}else{
-					json.push(obj)
-				}
+		//完成登录检测后获取当前路径发起文件请求,最后关闭loading界面
+		promise
+			.then((res) => {
+				this.setState({
+					admin : res
+				})
+				return new Promise((solve,reject) => {
+					this.props.getCloudInit({path},solve);
+				})
 			})
-			This.setState({
-				renameInput : false,
-				activeFile : null,
-				renameValue : null,
-				file : json,
-			});
-			message.success('成功更换了文件名');
-		});
-	},
-	reNameEnd() {
+			.then(res =>{
+				this.setState({
+					getInitLoading : false,
+					filePath : res.path.split('/'),
+					files : res.file
+				});
+			})
+	}
+	//fileCloud主路径被返回undefined,转换当前路径至请求需要的路径.
+	getNowPath(props = this.props){
+		let splat = props.params.splat;
+		return `/${void 0 === splat?'':splat}`;
+	}
+	//显示Menu组件,x,y为其位置,在fileList以当前组件中都会被调用
+	//当用户右键的目标为文件时,则额外多传入一个item参数用于设置当前被选中的文件夹
+	showMenu(e,type,item){
+		let x = e.clientX,
+			y = e.clientY,
+			data = this.getMenuDetail(type);
+		if(e.button == 0){
+			this.hideMenu();
+		}else{
+			let state = {
+				menu : {pos : {display:'block',x:x,y:y},data}
+			};
+			if(void 0 !== item) state = Object.assign(state,{activeFolder:item});
+			this.setState(state);
+		}
+	}
+	//隐藏Menu组件
+	hideMenu(){
+		let menu = this.state.menu;
+		menu.pos.display = 'none';
 		this.setState({
-			renameInput : false,
-			activeFile : null,
-			renameValue : null,
-		});
-	},
-	newFile(e) {
-		e.stopPropagation();
-		e.preventDefault();
-		var name = "",
-			json = this.state.file;
-			json.push({
-				ext: "",
-				isFolder: true,
-				name: name,
-				path: name,
-			});
+			menu
+		})
+	}
+	//根据用户点击的是文件还是背景层来给出不同的menu菜单列表
+	getMenuDetail(type){
+		switch(type){
+			case 'bg':
+				return [{name : '新建文件夹',fn : () => this.showModel('newFolder')},
+						{name : '黏贴',fn : () => this.pasteFolder()}
+				];
+			case 'folder':
+				return [{name : '新建文件夹',fn : () => this.showModel('newFolder')},
+						{name : '重命名',fn : () => this.showModel('renameFolder')},
+						{name : '删除',fn : () => this.removeFolder()},
+						{name : '复制',fn : () => this.copyCutFolder('copy')},
+						{name : '剪切',fn : () => this.copyCutFolder('cut')}
+				];
+		}
+	}
+	copyCutFolder(type){ 
+		var pasteFolder = {
+				type,
+				name : this.state.activeFolder.name,
+				path : this.state.activeFolder.path.replace(/^\//,'')
+			},
+			files = this.state.files;
+		if(type == 'cut') files = files.filter(item => item.name != this.state.activeFolder.name);
 		this.setState({
-			file : json,
-			menuDis : false,
-			renameInput : true,
-			activeFile : name,
-		});
-	},
-	newFileSub(value){
-		if(this.hasName(value)){
-			message.error("不得与其他文件重名,请更改");
+			pasteFolder,
+			files
+		})
+		message.success('操作成功您可以进行黏贴')
+	}
+	pasteFolder(){
+		let {type,path:old_path,name}= this.state.pasteFolder;
+		if(type == ''||name == '') return;
+		while(this.validatorName(name).length > 10){
+			if(/\-(\d+)$/.test(name)){
+				name = name.replace(/\-(\d+)$/,num =>{return `-${Number(num.slice(1))+1}`})
+			}else{
+				name = name + '-1';
+			}
+		}
+		let new_path = this.state.filePath.join("/").replace(/^\//,'') +'/'+ name,
+			fn = type=='copy'?this.props.pasteCopyFolder:this.props.pasteCutFolder;
+		if(old_path == new_path.replace(/^\//,'')){
+			this.getFileInIt(this.getNowPath());
 			return;
-		};
-		const path = this.state.path.join("/"),
-			  query = {
-				name : value,
-				path : path,
-			},
-			   file = this.state.file,
-			   This = this;
-		newFolder(query,function(err){
-			throw new Error(err);
-		},function(res){
-			file[file.length-1] = res.body;
-			This.setState({
-				renameInput : false,
-				activeFile : null,
-				renameValue : null,
-				file : file,
-			});
-		});
-	},
-	removeFile(e){
-		e.stopPropagation();
-		e.preventDefault();
-		const This = this;
-		confirm({
-	    title: '删除文件',
-	    content: '您是否确定要删除文件,系统不可逆',
-	    onOk: function() {
-	    		const path = This.state.path.join("/"),
-					  name = This.state.activeFile,
-					  query = {
-					  	path : path?path+"/"+name:name,
-					  },
-					  file = This.state.file;
-			    removeFile(query,function(err){
-			    	throw new Error(err);
-			    },function(res){
-			    	file.map(function(obj,index){
-			    		if(obj.name == name){
-			    			file.splice(index,1);
-			    		}
-			    	})
-			    	This.setState({
-			    		file : file,
-						activeFile : null,
-						menuDis : false,
-			    	})
-			    	message.success('恭喜你成功删除文件');
-			    });
-			},
-	    	onCancel(){},
+		}
+		fn({old_path,new_path},res =>{
+			this.setState({
+				files : [...this.state.files,res]
+			})
+			message.success('成功你黏贴一个文件');
+		})
+	}
+	showModel(handleType){
+		this.setState({
+			modelVisible : true,
+			handleType
+		})
+	}
+	hideModal(){
+		this.setState({modelVisible:false})
+	}
+	removeFolder(){
+		let self = this;
+		Modal.confirm({
+		    title: '删除文件',
+		    content: '您是否确定要删除文件,系统不可逆',
+		    onOk:() =>{
+		    	let {name:oldName,path} = this.state.activeFolder,
+					query = {
+						path:path.replace(/^\//,'')
+					}
+				this.props.removeCloudFolder(query,oldName,() =>{
+					let files = this.state.files.filter(item => item.name != oldName);
+					this.setState({
+						files,
+						modelVisible : false,
+					});
+					message.success('成功删除文件夹');
+				})
+		    },
+		    onCancel(){},
 	  	});
-	},
-	endNewFile(){
-		const file = this.state.file;
-			  file.splice(file.length-1,1); 
-		this.setState({
-			file : file,
-			renameInput : false,
-			renameValue : null,
-		})
-	},
-	copy(){
-		const This = this;
-		this.state.file.map(function(item){
-			if(item.name == This.state.activeFile){
-				This.setState({
-					copyItem : item,
-				})
-			}
-		});
-		message.success("成功复制文件"+This.state.activeFile);
-	},
-	paste() {
-		const obj = this.state.copyItem || this.state.cutItem,
-			  pasteFn = this.state.copyItem?pasteCopyFile : pasteCutFile,
-			  item = this.deepCopy(obj),
-			  oldPath = item.path,
-			  file = this.state.file,
-			  This = this;
-	    if(this.hasName(item.name)){
-	    	item.name = item.name + "-副本",
-	    	item.path = item.path + "-副本" 
-	    }
-		const query = {
-			  old_path : oldPath,
-              new_path : this.state.path.join("/") + "/" + item.name,
+	}
+	handleSubmit(){
+		let name = this.state.folderName,
+			couldSub = this.validatorName(name);
+		if(typeof couldSub == 'string'){
+			message.error(couldSub);
+			return;
 		}
-		pasteFn(query,function(err){
-			throw new Error(err);
-		},function(res){
-			file.push(res.body);
-			This.setState({
-				file : file,
-				copyItem : null,
-				cutItem : null,
+		if(this.state.handleType == 'newFolder'){
+			this.props.newCloudFolder({
+				name,
+				path : this.state.filePath.join('/')
+			},res=>{
+				this.setState({
+					files : [...this.state.files,res],
+					modelVisible : false,
+				});
+				message.success('成功新建一个文件夹');
 			})
-			message.success("成功黏贴文件"+item.name);
-		});
-		
-	},
-	cut() {
-		const This = this;
-		this.state.file.map(function(item){
-			if(item.name == This.state.activeFile){
-				This.setState({
-					cutItem : item,
+		}else{
+			let {name:oldName,path} = this.state.activeFolder,
+				query = {name,path}
+			this.props.renameCloudFolder(query,oldName,res=>{
+					let files = this.state.files.map(item => {
+					if(item.name == oldName) return res;
+					return item;
 				})
-			}
-		});
-		message.success("成功剪切文件"+This.state.activeFile);
-	},
-	hasName(value){
-		return this.state.file.some(function(obj){
-			return obj.name == value;
-		})
-	},
-	deepCopy(json){
-		var item = new Object();
-		for (var key in json){
-			item[key] = json[key];
+				this.setState({
+					files,
+					modelVisible : false,
+					folderName : ''
+				});
+				message.success('成功重命名文件夹');
+			})
 		}
-		return item;
-	},
-});
+	}
+	validatorName(name){
+		if(name === '') return '文件名不能为空';
+		if(this.state.files.find(item => item.name == name)) return '已经有相同名字文件,请更换名字';
+		return true;
+	}
+}
 
-export default FileCloud;
+
+
+//projectDetail数据
+const getDataProps = state => ({});
+
+//链接方法
+const setFnProps = dispatch => ({
+  dispatch,
+  initLogin         : bindActionCreators(initLogin,dispatch),
+  getCloudInit      : bindActionCreators(getCloudInit,dispatch),
+  newCloudFolder    : bindActionCreators(newCloudFolder,dispatch),
+  renameCloudFolder : bindActionCreators(renameCloudFolder,dispatch),
+  removeCloudFolder : bindActionCreators(removeCloudFolder,dispatch),
+  pasteCopyFolder   : bindActionCreators(pasteCopyFolder,dispatch),
+  pasteCutFolder	: bindActionCreators(pasteCutFolder,dispatch),
+})
+//链接数据层
+export default connect(getDataProps,setFnProps)(FileCloud);

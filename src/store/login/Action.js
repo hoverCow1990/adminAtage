@@ -3,8 +3,8 @@ import request from 'superagent';
 import {cookieMiddleware} from '../cookieMiddleware'	//中间件
 import {
 	REQUEST_BASE_URL,
-	API
-} from '../requestApi/requestApi';        	//各类请求的Api地址以及请求根地址
+	MAIN_API
+} from '../requestApi/requestApi';        	//各类请求的MAIN_API地址以及请求根地址
 
 /*
  * 获取用户是否登录
@@ -20,10 +20,11 @@ const initLoginData = data => ({
 	data
 });
 
-//检测已登录后设置全局用户属性
-export const initLogin = () => dispatch =>{
+//检测已登录后设置全局用户属性,
+//第一个参数为成功回调,第二个参数如果不填则获取其他用户信息,填false则不获取其他用户数据
+export const initLogin = (cb,isSetOther = true) => dispatch =>{
 	request
-		.get(REQUEST_BASE_URL + API.INIT)
+		.get(REQUEST_BASE_URL + MAIN_API.INIT)
 		.withCredentials()
 		.then(cookieMiddleware(dispatch))
 		.then(res => {
@@ -34,7 +35,8 @@ export const initLogin = () => dispatch =>{
 				id,
 				project
 			}));
-			dispatch(setOtherUserDate(res.users));
+			isSetOther && dispatch(setOtherUserDate(res.users));
+			cb && cb(res.info.name);
 		})
 		.catch(err => console.error(err));
 }
@@ -50,7 +52,7 @@ export const DO_LOGIN = "DO_LOGIN";
 
 export const doLogin = (query,sucess,fail) => dispatch =>{
 	request
-		.get(REQUEST_BASE_URL + API.LOGIN)
+		.get(REQUEST_BASE_URL + MAIN_API.LOGIN)
 		.query(query)
 		.withCredentials()
 		.end((err,res) => {
@@ -72,7 +74,7 @@ export const doLogoutData = () => ({
 
 export const doLogout = () => dispatch => {
 	request
-		.get(REQUEST_BASE_URL + API.LOGINOUT)
+		.get(REQUEST_BASE_URL + MAIN_API.LOGINOUT)
 		.withCredentials()
 		.end((err,res) => {
 			if(err) throw new Error(err);
@@ -92,7 +94,7 @@ const setOtherUserDate = otherList => ({
 
 export const setOtherUser = () => dispatch => {
 	request
-		.get(REQUEST_BASE_URL + API.INIT)
+		.get(REQUEST_BASE_URL + MAIN_API.INIT)
 		.withCredentials()
 		.then(cookieMiddleware(dispatch))
 		.then(res => {
@@ -115,7 +117,7 @@ const cloneProDate = project => ({
 
 export const clonePro = (query,success,fail) => dispatch => {
 	request
-		.get(REQUEST_BASE_URL + API.CLONE)
+		.get(REQUEST_BASE_URL + MAIN_API.CLONE)
 		.query(query)
 		.withCredentials()
 		.then(cookieMiddleware(dispatch))

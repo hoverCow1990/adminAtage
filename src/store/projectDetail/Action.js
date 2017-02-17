@@ -3,7 +3,7 @@ import {hashHistory} from 'react-router';	//路由机制
 import {cookieMiddleware} from '../cookieMiddleware'; //中间件
 import {
 	REQUEST_BASE_URL,
-	API
+	MAIN_API
 } from '../requestApi/requestApi';        	//各类请求的Api地址以及请求根地址
 
 /*
@@ -21,7 +21,7 @@ const setProDetailData = projectDetail =>({
 
 export const setProDetail = query => dispatch => {
 	request
-		.get(REQUEST_BASE_URL + API.DETAIL)
+		.get(REQUEST_BASE_URL + MAIN_API.DETAIL)
 		.query(query)
 		.withCredentials()
 		.then(cookieMiddleware(dispatch))
@@ -42,7 +42,7 @@ export const setProDetail = query => dispatch => {
 
 export const selectFolder = (query,success,fail) => dispatch => {
 	request
-		.get(REQUEST_BASE_URL + API.EDITDEPLOY)
+		.get(REQUEST_BASE_URL + MAIN_API.EDITDEPLOY)
 		.query(query)
 		.withCredentials()
 		.then(cookieMiddleware(dispatch))
@@ -61,7 +61,7 @@ export const selectFolder = (query,success,fail) => dispatch => {
 
  export const selectBranch = (query,success,fail) => dispatch => {
  	request
- 		.get(REQUEST_BASE_URL + API.CHECKOUT)
+ 		.get(REQUEST_BASE_URL + MAIN_API.CHECKOUT)
  		.query(query)
  		.withCredentials()
  		.then(cookieMiddleware(dispatch))
@@ -80,7 +80,7 @@ export const selectFolder = (query,success,fail) => dispatch => {
 
 export const checkoutRemoteBranch = (query,success,fail) => dispatch => {
 	request
- 		.get(REQUEST_BASE_URL + API.BRANCH)
+ 		.get(REQUEST_BASE_URL + MAIN_API.BRANCH)
  		.query(query)
  		.withCredentials()
  		.then(cookieMiddleware(dispatch))
@@ -99,7 +99,7 @@ export const checkoutRemoteBranch = (query,success,fail) => dispatch => {
 
 export const commitBack = (query,success,fail) => dispatch => {
 	request
-		.get(REQUEST_BASE_URL + API.RESET)
+		.get(REQUEST_BASE_URL + MAIN_API.RESET)
 		.query(query)
 		.withCredentials()
 		.then(cookieMiddleware(dispatch))
@@ -118,7 +118,7 @@ export const commitBack = (query,success,fail) => dispatch => {
 
 export const pullRemoteBranch = (query,success,fail) => dispatch =>{
 	request
-		.get(REQUEST_BASE_URL + API.PULL)
+		.get(REQUEST_BASE_URL + MAIN_API.PULL)
 		.query(query)
 		.withCredentials()
 		.then(cookieMiddleware(dispatch))
@@ -137,7 +137,7 @@ export const pullRemoteBranch = (query,success,fail) => dispatch =>{
 
 export const deployFolder = (query,success,fail) => dispatch =>{
 	request
-		.get(REQUEST_BASE_URL + API.DEPLOY)
+		.get(REQUEST_BASE_URL + MAIN_API.DEPLOY)
 		.query(query)
 		.withCredentials()
 		.then(cookieMiddleware(dispatch))

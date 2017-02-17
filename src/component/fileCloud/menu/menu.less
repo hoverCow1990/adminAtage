@@ -1,0 +1,22 @@
+.myMenuList{
+	position:fixed;
+	width:150px;
+	top:0;
+	left:0;
+	background-color:#fff;
+	box-shadow:0 0 2px rgba(0,0,0,.2);
+	border-radius:4px;
+	li{
+		padding-top:10px;
+		padding-bottom:10px;
+		text-align:center;
+		cursor:pointer;
+		transition:.2s;
+		&:not(:last-child){
+			border-bottom:1px solid #d8d8d8;
+		}
+		&:hover{
+			background-color:#ececec;
+		}
+	}
+}

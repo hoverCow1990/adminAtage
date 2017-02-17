@@ -15,7 +15,7 @@ export const cookieMiddleware = dispatch => res => {
 			reject("没有登录");
 			message.warning('麻烦请先登录');
 			return;
-		} 
+		}
 		solve(res);
 	})
 }

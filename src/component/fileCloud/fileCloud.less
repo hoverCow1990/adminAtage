@@ -1,0 +1,49 @@
+@import '../../regular.less';
+
+.cloud-wrapper{
+	position:relative;
+	width:100%;
+	height:100%;
+	.initLoading{
+		position:absolute;
+		justify-content:center;
+		align-items:center;
+		width:100%;
+		height:100%;
+		background-color:rgba(255,255,255,.2);
+		filter: blur(1px);
+	}
+}
+.fileCloud{
+	width:@screenWrapper;
+	height:100%;
+	.file-list{
+		&>li{
+			width:80px;
+			margin-top:30px;
+			margin-right:40px;
+			float:left;
+			cursor:pointer;
+			&:nth-child(8n){
+				margin-right:0;
+			}
+			.file-icon{
+				width:60px;
+				height:60px;
+				margin:0 auto 10px;
+			}
+			p{
+				width:100%;
+				text-align:center;
+				letter-spacing:1px;
+				font-family:"Comic Sans MS","Microsoft YaHei";
+				transition:.2s;
+			}
+			&:hover{
+				p{
+					color:#222;
+				}
+			}
+		}
+	}
+}

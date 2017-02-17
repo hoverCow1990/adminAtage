@@ -51,9 +51,10 @@ class HomePage extends Component{
 	//基本信息运用adminData数据,项目运用project数据
 	render(){
 		let isOther = this.props.params.id;
+		if(isOther && !this.props.otherUser.length) return(<div></div>);
 		let data = isOther?this.props.otherUser[0].find(item=>item.id==isOther):this.props.adminData;
 		let{name,id,project} = data;
-		if(isOther && !this.props.otherUser.length || !id) return(<div></div>)
+		if(!id) return(<div></div>)
 		return(
 			<article className="homePage baseWrapper">
 				<section className="ueser-data">
@@ -154,6 +155,12 @@ class HomePage extends Component{
 	      modelVisible: true,
 	    });
 	}
+	//取消clone模态框
+	cancelModal() {
+	    this.setState({
+	      modelVisible: false,
+	    });
+	}
 	//提交下载进行发送请求
 	//只支持http clone所以得转换地址
 	handleSubmit(){
@@ -173,14 +180,9 @@ class HomePage extends Component{
 		    });
 		});
 	}
-	//取消clone模态框
-	cancelModal() {
-	    this.setState({
-	      modelVisible: false,
-	    });
-	}
 }
 
+//链接adminDate数据otherUser数据,以及当前分页列表数据
 const getDataProps = state => ({
 	adminData 		  : state.adminData,
 	otherUser 		  : state.otherUser,
