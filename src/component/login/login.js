@@ -1,13 +1,16 @@
 import React,{Component} from 'react';  
-import {Form} from 'antd';                      //antd组件
 import {connect} from 'react-redux';            //connect
 import LoginContent from './LoginContent';      //登录界面
 import WelcomeContent from './WelcomeContent';  //欢迎界面
 import {bindActionCreators} from 'redux';       //用于链接异步redux的dispacth
 import {
     initLogin,                                  //初始化请求
-    doLogin                                     //登录请求
+    doLogin,                                    //登录请求
 } from '../../store/login/Action';
+import {
+    Form,
+    Spin
+} from 'antd';                                  //antd组件
 import '../../../node_modules/antd/dist/antd.css';  
 import './login.less';            
 
@@ -26,6 +29,7 @@ class LoginPage extends Component{
     super();
     this.state = {
       loginLodingTimer : null,
+      bgImgLoading : true,
     };
   }
   //未登录状态窜然LoginContent,反之渲染WelcomeContent
@@ -34,6 +38,9 @@ class LoginPage extends Component{
     let showContent = this.props.adminData.noLogin === true?<LoginContent onDoLogin={doLogin}/>:<WelcomeContent/>;
     return (
       <section className="adminLoginWrapper">
+        <div className={`initLoading ${this.state.bgImgLoading?'down':'up'}`}>
+          <Spin spinning={true}></Spin>
+        </div>
         <div className="myLogin viewWrapper">
           <div className="login">
               {showContent}
@@ -45,6 +52,9 @@ class LoginPage extends Component{
   //组件完成是进行登录检测
   componentDidMount(){
     this.checkLogin();
+    var img = document.createElement('img');
+    img.src = "http://www.web-jackiee.com/templets/blog/demo/publicImage/adminAtage/bg-1.jpg";
+    img.onload = () => this.setState({bgImgLoading : false});
   }
   //如下函数在渲染成功后调用,进行用户是否已经登录的检测,并获取相关数据
   checkLogin(){

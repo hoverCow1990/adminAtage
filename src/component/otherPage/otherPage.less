@@ -57,4 +57,39 @@
 			}
 		}
 	}
+	.otherUser-footer{
+		position:relative;
+		margin-top:12px;
+		padding-top:28px;
+		border-top:1px solid #e6e6e6;
+	}
+	.otherUser-btn{
+		@height:40px;
+		@bgColor:#1c598a; 
+		width:120px;
+		height:@height;
+		border-radius:@height/2;
+		margin:0 auto;
+		line-height:38px;
+		font-size:15px;
+		text-align:center;
+		letter-spacing:1px;
+		color:#eee;
+		background-color:@bgColor; 
+		box-shadow: 0 0 5px rgba(0,0,0,.3);
+		transition:.3s;
+		cursor:pointer;
+		i{
+			margin-left:5px; 
+			transform:translateY(1px);
+		}
+		&:hover{
+			background-color:darken(@bgColor,5%)
+		}
+	}
+	.otherUser-pag{
+		position:absolute;
+		left:0;
+		top:30px;
+	}
 }

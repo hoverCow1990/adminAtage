@@ -89,4 +89,13 @@
 			}
 		}
 	}
+	.initLoading{
+		display:flex;
+		background-color:#fff;
+		transition:opacity 1s cubic-bezier(.14,1,.93,-0.56),transform 0s 1.3s;
+		&.up{
+			transform:translateX(2600px);
+			opacity:0;
+		}
+	}
 }

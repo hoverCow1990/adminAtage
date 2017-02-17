@@ -7,12 +7,12 @@ import {
 } from './Action';
 
 //对用户的详细文件数据进行管理
-
 const defaultState = {
 	files : [],
 	filePath : '',
 }
 
+//对各类文件的操作信息进行处理
 export const fileClouds = (state = defaultState,action) =>{
 	let oldName = action.oldName;
 	switch(action.type){
@@ -28,7 +28,7 @@ export const fileClouds = (state = defaultState,action) =>{
 		case RENAME_CLOUD_FOLDER:
 			return Object.assign({},state,{
 				files:state.files.map(item => {
-					if(item.name == oldName){
+					if(item.name === oldName){
 						return action.file;
 					}
 					return item;
@@ -36,7 +36,7 @@ export const fileClouds = (state = defaultState,action) =>{
 			})
 		case REMOVE_CLOUD_FOLDER:
 			return Object.assign({},state,{
-				files:state.files.filter(item => item.name != oldName)
+				files:state.files.filter(item => item.name !== oldName)
 			})
 		case PASTE_FOLDER:
 			return Object.assign({},state,{

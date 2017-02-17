@@ -5,7 +5,7 @@ import {
 } from 'react-router';
 import {connect} from 'react-redux';     //connect
 import {doLink} from '../../store/link/Action';
-import './slideNav.css';
+import './slideNav.less';
 
 const SubMenu = Menu.SubMenu;
 /*
@@ -43,10 +43,9 @@ class SlideNav extends Component{
 			        <SubMenu key="sub3" title={<span><Icon type="file-text" /><span>公司文件</span></span>}>
 			            <Menu.Item key="fileCloud">文件列表</Menu.Item>
 			        </SubMenu>
-			        <SubMenu key="sub4" title={<span><Icon type="pay-circle" /><span>公司财务信息管理</span></span>}>
-			            <Menu.Item key="pay">支出</Menu.Item>
-			            <Menu.Item key="income">收入</Menu.Item>
-			            <Menu.Item key="profit">收益线性图</Menu.Item>
+			        <SubMenu key="sub4" title={<span><Icon type="bar-chart" /><span>公司人员数据图</span></span>}>
+			            <Menu.Item key="chart-deploy">项目数据</Menu.Item>
+			            <Menu.Item key="chart-admin">我的数据</Menu.Item>
 			        </SubMenu>
 		        </Menu>
 		    </nav>
@@ -60,6 +59,7 @@ class SlideNav extends Component{
 		return openKeys;
 	}
 	checkCurrentLink(){
+		console.log(this.props.currentLink)
 		switch(this.props.currentLink){
 			case 'login' :
 			case 'regist':
@@ -69,9 +69,8 @@ class SlideNav extends Component{
 				return ['sub2'];
 			case 'fileCloud' :
 				return ['sub3'];
-			case 'pay' :
-			case 'income':
-			case 'profit':
+			case 'chart-deploy':
+			case 'chart-admin':
 				return ['sub4'];
 			default :
 				return [];

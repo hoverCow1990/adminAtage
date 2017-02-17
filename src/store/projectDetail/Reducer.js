@@ -1,4 +1,3 @@
-import {combineReducers} from 'redux';
 import {
 	SET_PRO_DETAIL
 } from './Action';

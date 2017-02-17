@@ -1,15 +1,19 @@
 import React,{ Component} from 'react';
-import './fileList.css';
-import {Icon} from 'antd';
 import {hashHistory} from 'react-router';
 import {REQUEST_BASE_URL} from '../../../store/requestApi/requestApi';
+
+/*
+ *  云盘列表信息
+ *	点击文件支持[新建文件夹,删除,重命名,复制,剪切]
+ *  作者:hoverCow,日期:2017-02-16
+ */
+
 class FileList extends Component{
 	constructor(){
 		super();
 	}
+	//渲染文件列表
 	render(){
-		// console.log(this.props);
-		//console.log('render');
 		return (
 			<section className='file-wrapper'>
 				<ul className='file-list'>
@@ -18,12 +22,12 @@ class FileList extends Component{
 			</section>	
 		)
 	}
+	//更换this.props.fileList的数组信息,设置文件名,点击事件
 	renderList(){
-		console.log('render');
-		return this.props.fileList.map(item => 
-		<li key={item.name} onMouseDown={ e => this.handleFileClick(e,item)}>
+		return this.props.fileList.map((item,index) => 
+		<li key={index} onMouseDown={ e => this.handleFileClick(e,item)}>
 			<div className='file-icon'>
-				<img src={'http://www.web-jackiee.com/templets/blog/demo/publicImage/adminAtage/icon-'+ this.inconSwitch(item.ext) +'.png'}/>
+				<img alt='hello' src={'http://www.web-jackiee.com/templets/blog/demo/publicImage/adminAtage/icon-'+ this.inconSwitch(item.ext) +'.png'}/>
 			</div>
 			<p>{item.name}</p>
 		</li>)
@@ -33,11 +37,9 @@ class FileList extends Component{
 		// console.log(this.props)
 		// console.log(nextProps);
 		// console.log('---------------------');
-		// let fileList = nextProps.fileList;
-		// return (fileList && fileList.length);
 		return true;
 	}
-	//e.button(0为左键,2为右键)
+	//e.button(0为左键,2为右键),设置冒泡组组织背景层点击事件,点击左键时均调用福组件的hideMenu
 	handleFileClick(e,item){
 		e.stopPropagation();
 		e.preventDefault();
@@ -80,5 +82,4 @@ class FileList extends Component{
 		}
 	}
 }
-//isFolder?hashHistory.push("/fileCloud/"+path):window.open(this.state.loaction+"static/"+path);
 export default FileList;

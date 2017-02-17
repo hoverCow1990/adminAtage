@@ -1,23 +1,23 @@
-import React from 'react';
+import React,{Component} from 'react';
 import { Breadcrumb } from 'antd';
-import {Link} from 'react-router';
-import './breadList.css';
+import {
+	Link
+} from 'react-router';
+import './breadList.less';
 
 const host = "fileCloud";
 
-const BreadList = React.createClass({
+/*
+ *  右边栏面包屑导航
+ *  根据父级的state.filePath进行分割
+ *  作者:hoverCow,日期:2017-02-17
+ */
+
+class BreadList extends Component{
+	constructor(){
+		super();
+	}
 	render(){
-		var href = host;
-		const items = this.props.path.map(function(item,i){
-			href += "/" + item
-			return (
-				<Breadcrumb.Item  href="" key={i}>
-					<Link to={href}>
-						{item}
-					</Link>
-				</Breadcrumb.Item>
-			)
-		});
 		return (
 			<Breadcrumb>
 			    <Breadcrumb.Item>
@@ -25,10 +25,23 @@ const BreadList = React.createClass({
 			    		Home
 			    	</Link>
 			    </Breadcrumb.Item>
-			    {items}
-			</Breadcrumb>
+			    {this.renderLinks()}
+			</Breadcrumb>	
 		)
 	}
-});
+	//返回导航栏
+	renderLinks(){
+		let href = host;
+		return this.props.path.slice(1).map((item,index) =>{
+			href += '/' + item;
+			return (
+				<Breadcrumb.Item  key={index}>
+					<Link to={href}>
+						{item}
+					</Link>
+				</Breadcrumb.Item>)
+		})
+	}
+}
 
 export default BreadList;

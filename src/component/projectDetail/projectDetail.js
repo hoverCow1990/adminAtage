@@ -102,7 +102,7 @@ class ProjectDetail extends Component{
 									<Button type="primary" onClick={()=>this.handlePull()}>更新远程至本地仓库</Button>
 								    <Button type="primary" onClick={()=>this.handleDeploy()}>在本地云盘上线</Button>
 								    <Button type="primary"><a href={url} target="blank">预览git仓库</a></Button>
-								    <Button type="primary">预览本地云盘</Button>
+								    <Button type="primary" onClick={()=>hashHistory.push('/fileCloud')}>预览本地云盘</Button>
 								</div>
 							</Col>
 						</Row>

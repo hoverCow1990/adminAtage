@@ -1,4 +1,3 @@
-import {combineReducers} from 'redux';
 import {
 	INIT_LOGIN,
 	DO_LOGIN,
@@ -37,7 +36,7 @@ export const adminData = (state = defaultState.adminData,action) =>{
 export const otherUser = (state = defaultState.otherUser,action) =>{
 	switch(action.type){
 		case SET_OTHER_USER :
-			return [...state,action.otherList];
+			return action.otherList;
 		default :
 			return state;
 	}

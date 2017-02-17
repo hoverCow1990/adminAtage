@@ -19,10 +19,10 @@ export const MAIN_API = {
 
 //各云盘请求地址
 export const FILE_CLOUD_API = {
-    GET_FOLDER    : '/file/get/',
-    RENAME_FOLDER : '/file/rename/',
-    NEW_FOLDER    : '/file/mkdir/',
-    REMOVE_FOLDER : '/file/remove/',
-    COPY_FOLDER   : '/file/copy',
-    CUT_FOLDER    : '/file/move',
+    GET_FOLDER    : '/file/get/',       //获取当前路径文件信息
+    RENAME_FOLDER : '/file/rename/',    //重命名该文件夹
+    NEW_FOLDER    : '/file/mkdir/',     //新建文件夹
+    REMOVE_FOLDER : '/file/remove/',    //移除该文件夹
+    COPY_FOLDER   : '/file/copy',       //黏贴复制的文件夹
+    CUT_FOLDER    : '/file/move',       //剪切复制的文件夹
 }

@@ -4,15 +4,6 @@
 	position:relative;
 	width:100%;
 	height:100%;
-	.initLoading{
-		position:absolute;
-		justify-content:center;
-		align-items:center;
-		width:100%;
-		height:100%;
-		background-color:rgba(255,255,255,.2);
-		filter: blur(1px);
-	}
 }
 .fileCloud{
 	width:@screenWrapper;
@@ -38,6 +29,7 @@
 				letter-spacing:1px;
 				font-family:"Comic Sans MS","Microsoft YaHei";
 				transition:.2s;
+				.hiddenText();
 			}
 			&:hover{
 				p{
