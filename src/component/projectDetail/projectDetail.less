@@ -183,3 +183,42 @@
 		color:#287bb5;
 	}
 }
+.modelSelect{
+	p{
+		letter-spacing:1px;
+	}
+	i{
+		font-size:20px;
+		margin-right:10px;
+		color:#108ee9;
+	}
+	ul{
+		margin-top:30px;
+		margin-bottom:20px;
+		overflow:hidden;
+	}
+	li{
+		position:relative;
+		float:left;
+		padding-right:10px; 
+		font-size:12px;
+		transition:.2s;
+		cursor:pointer;
+		&:not(:first-child){
+			padding-left:5px;
+		}
+		&:not(:last-child):after{
+			position:absolute;
+			content:'/';
+			right:0;
+			color:#b5b5b5;
+		}
+		&:hover{
+			color:#0664a9;
+		}
+		&.active{
+			color:#ff4e4e;
+			font-weight:bold;
+		}
+	}
+}

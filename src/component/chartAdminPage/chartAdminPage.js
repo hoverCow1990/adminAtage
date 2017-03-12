@@ -18,16 +18,6 @@ class ChartAdminPage extends Component{
 		    legend: {
 		        data:['scatter1','scatter2']
 		    },
-		    toolbox: {
-		        show : true,
-		        feature : {
-		            mark : {show: true},
-		            dataZoom : {show: true},
-		            dataView : {show: true, readOnly: false},
-		            restore : {show: true},
-		            saveAsImage : {show: true}
-		        }
-		    },
 		    xAxis : [
 		        {
 		            type : 'value',
@@ -38,7 +28,7 @@ class ChartAdminPage extends Component{
 		    yAxis : [
 		        {
 		            type : 'value',
-		            splitNumber: 4,
+		            splitNumber: 5,
 		            scale: true
 		        }
 		    ],
@@ -47,7 +37,7 @@ class ChartAdminPage extends Component{
 		            name:'scatter1',
 		            type:'scatter',
 		            symbolSize: function (value){
-		                return Math.round(value[2] / 5);
+		                return Math.round(value[2]/5);
 		            },
 		            data: randomDataArray()
 		        },
@@ -55,7 +45,7 @@ class ChartAdminPage extends Component{
 		            name:'scatter2',
 		            type:'scatter',
 		            symbolSize: function (value){
-		                return Math.round(value[2] / 5);
+		                return Math.round(value[2]/5);
 		            },
 		            data: randomDataArray()
 		        }
@@ -71,14 +61,16 @@ class ChartAdminPage extends Component{
 	render(){
 		let allUser = this.props.otherUser;
 		if(allUser.length === 0) return null;
-		console.log(1);
 		return (
 			<section className='chart-wrapper baseWrapper'>
-				<div className='pro-charts'>
-				<ReactEcharts
-				    option={this.state} 
-				    style={{height:700}} 
-				    onEvents={(this.onEvents())}  />
+				<div className='title-wrapper'>
+					<h2 className="base-title"><span>1</span>我的近期动态</h2>
+				</div>
+				<div className='admin-charts'>
+					<ReactEcharts
+					    option={this.state} 
+					    style={{height:700}} 
+					    onEvents={(this.onEvents())}  />
 				</div>
 			</section>
 		)

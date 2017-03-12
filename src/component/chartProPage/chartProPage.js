@@ -8,13 +8,14 @@ import {
 	Row,
 	Col,
     Modal,
-    Icon
+    Icon,
+    Checkbox
 } from 'antd';
 import './chartProPage.less';
 import ProChart from './proChart';
 import ComChart from './comChart';
 import {ADMIN_MAX_STAR} from '../../setting/setting';
-
+const CheckboxGroup = Checkbox.Group;
 /*
  *  项目线新图
  *  作者:hoverCow,日期:2017-02-17
@@ -28,17 +29,29 @@ class chartProPage extends Component{
 			modelVisible : false,		//模态框的显示隐藏
 			modelDetail : null,
 			modelLink : '',
+			infoSelect : [],
+			selectData : [],
+			allData : new Map(),	
 		}
 	}
 	componentWillMount(){
-		this.props.initLogin();
+		this.props.initLogin((admin,otherUser)=>{
+			let infoSelect = otherUser.map(item => item.name),
+				allData = new Map();
+			otherUser.forEach(item => allData.set(item.name,item))
+			this.setState({
+				infoSelect,
+				selectData : otherUser,
+				allData,
+			})
+		});
 	}
 	shouldComponentUpdate(nextProps){
 		return nextProps.otherUser.length !== 0;
 	}
 	render(){
-		let allUser = this.props.otherUser;
-		if(allUser.length === 0) return(null);
+		let {infoSelect,selectData} = this.state;
+		if(infoSelect.length === 0) return(null);
 		return (
 			<section className='chart-wrapper baseWrapper'>
 				<div className='title-wrapper'>
@@ -47,10 +60,10 @@ class chartProPage extends Component{
 				<div className='chart-container'>
 					<Row>
 						<Col span={12}>
-							<ProChart data={allUser} select={this.state.select} showModel={(name)=>this.showModel(name)}/>
+							<ProChart data={selectData} showModel={(name)=>this.showModel(name)}/>
 						</Col>
 						<Col span={12}>
-							<ComChart data={allUser} select={this.state.select} showModel={(name)=>this.showModel(name)}/>
+							<ComChart data={selectData} showModel={(name)=>this.showModel(name)}/>
 						</Col>
 					</Row>
 				</div>
@@ -67,8 +80,20 @@ class chartProPage extends Component{
 		         		{this.getDetail()}
 		         	</div>
 		        </Modal>
+		        <div className='info-select'>
+		        	<CheckboxGroup options={infoSelect} defaultValue={infoSelect} onChange={(nameArr)=>this.handleSelect(nameArr)} />
+		        </div>
 			</section>
 		)
+	}
+	handleSelect(nameArr){
+		let selectData = [];
+		nameArr.forEach(name=>{
+			selectData.push(this.state.allData.get(name));
+		})
+		this.setState({
+			selectData
+		})
 	}
 	showModel(name){
 		let modelDetail = this.props.otherUser.find(item => item.name === name),
@@ -87,7 +112,6 @@ class chartProPage extends Component{
 	getDetail(){
 		let modelDetail = this.state.modelDetail;
 		if(null=== modelDetail) return null;
-		console.log(modelDetail)
 		let {id,name,project} = modelDetail,
 			len = project.length;
 		return (

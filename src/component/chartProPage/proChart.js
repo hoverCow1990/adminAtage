@@ -56,8 +56,7 @@ class ProChart extends Component{
 		}
 	}
 	componentWillMount(){
-		let {select,data} = this.props;
-		this.initChartData(data);
+		this.initChartData(this.props.data);
 	}
 	render(){
 		return (
@@ -75,6 +74,9 @@ class ProChart extends Component{
 				this.props.showModel(params.name);
 			}
 		}
+	}
+	componentWillReceiveProps(nextProps){
+		this.initChartData(nextProps.data)
 	}
 	initChartData(allUser){
 		let lastLegend = this.state.legend,

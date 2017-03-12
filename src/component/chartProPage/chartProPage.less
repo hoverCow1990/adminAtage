@@ -2,16 +2,26 @@
 
 .chart-container{
 	width:@screenWrapper;
+	height:500px;
 	margin-top:30px;
+
+		.ant-checkbox-checked .ant-checkbox-inner, .ant-checkbox-indeterminate .ant-checkbox-inner{
+			background-color:#000;
+		}
+
+}
+.chart-wrapper{
+	.ant-checkbox-checked .ant-checkbox-inner, .ant-checkbox-indeterminate .ant-checkbox-inner{
+		background-color:#333;
+		border-color: #333;
+	}
 }
 .recharts-cartesian-axis-ticks{
 	margin-top:20px;
 }
-
 .pro-charts{
 	height:400px;
 }
-
 .chart-model-detail{
 	width:100%;
 	.detail-perviewer{
@@ -54,4 +64,8 @@
 		text-shadow:0 0 1px #333;
 		letter-spacing:5px;
 	}
+}
+
+.info-select{
+	margin-top:20px;
 }

@@ -17,7 +17,9 @@ import {
 	Spin,
     Button,
     Modal,
-    message
+    message,
+    Popover,
+    Icon
 } from 'antd';
 import './fileCloud.less';								//antd组件
 
@@ -66,6 +68,11 @@ class FileCloud extends Component{
 				<article className='fileCloud baseWrapper' onContextMenu={e=>e.preventDefault()} onMouseDown={e => this.showMenu(e,'bg')}>
 					<div className='title-wrapper'>
 						<h2 className="base-title"><span>1</span>文件信息</h2>
+						<div className='popTip'>
+					      <Popover placement="bottom" title='操作指南' content={this.renderGuide()} trigger="hover">
+					        <Icon type="info-circle" />
+					      </Popover>
+					    </div>
 						<div className='base-breadList'><BreadList path={this.state.filePath}/></div>
 					</div>
 					<FileList fileList={this.state.files} showMenu={this.showMenu.bind(this)} hideMenu={this.hideMenu.bind(this)}/>
@@ -101,6 +108,15 @@ class FileCloud extends Component{
 			menu : {pos:{display:'none',x:0,y:0},data:[]}
 		})
 		this.getFileInIt(path);
+	}
+	renderGuide(){
+		return(
+			<ul>
+				<li>1. 可在他人文件夹下进行复制或黏贴</li>
+				<li>2. 不能在他人文件夹下进行删除 / 重名的操作</li>
+				<li>3. 云盘首页只能存放用户主文件夹,且不能重命名</li>
+			</ul>
+		)
 	}
 	//用于发送请求获取当前路径文件信息,并将结果放置于store中的fileClouds以及adminDate
 	//并且复制了一份存入当前state中
@@ -234,12 +250,14 @@ class FileCloud extends Component{
 					query = {
 						path
 					}
-				console.log(path);
 				if(!path.startsWith(this.state.admin)){
 					message.error('您只能删除您自己的文件');
 					return;
 				}else if(path === this.state.admin){
-					message.error('您的主文件夹不能删除');
+					message.error('用户主文件夹不能删除');
+					return;
+				}else if(/(myWebpack|outFood)$/.test(path)){
+					message.error('myWebpack和outFood不能删,请自己新建文件夹或上传项目测试删除');
 					return;
 				}
 				this.props.removeCloudFolder(query,oldName,() =>{
@@ -255,16 +273,17 @@ class FileCloud extends Component{
 	  	});
 	}
 	//模态框提交重命名或者新建的请求,根据handlerType判断
+	//rename以及new都在改下执行
 	handleSubmit(){
 		let name = this.state.folderName,
 			couldSub = this.validatorName(name),
-			nowPath = this.state.filePath[1] === '';
+			nowPath = this.state.filePath[1];
 		if(typeof couldSub === 'string'){
 			message.error(couldSub);
 			return;
 		}
 		if(this.state.handleType === 'newFolder'){
-			if(nowPath) return message.error('云盘首页不能新建文件夹');
+			if(nowPath === '') return message.error('云盘首页不能新建文件夹');
 			this.props.newCloudFolder({
 				name,
 				path : this.state.filePath.join('/')
@@ -276,7 +295,8 @@ class FileCloud extends Component{
 				message.success('成功新建一个文件夹');
 			})
 		}else{
-			if(nowPath) return message.error('用户主文件夹不能更改名字');
+			if(nowPath === '') return message.error('用户主文件夹不能更改名字');
+			if(nowPath !== this.state.admin) return message.error('不能重名名他人的文件');
 			let {name:oldName,path} = this.state.activeFolder,
 				query = {name,path};
 			this.props.renameCloudFolder(query,oldName,res=>{

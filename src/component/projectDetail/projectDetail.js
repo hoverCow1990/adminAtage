@@ -50,6 +50,7 @@ class ProjectDetail extends Component{
 	//项目描述若问description则直接显示为...
 	render(){
 		if(!Object.keys(this.props.projectDetail).length) return(<div></div>);
+		let id = this.props.params.name;
 		let {name,folders,local_branches,remote_branches,description,active_branch,commit_info,deploy,url} = this.props.projectDetail;
 		let isCommit = this.state.modelType === "commitModle";
 		//若后台数据发生问题,则弹出错误报告
@@ -69,7 +70,7 @@ class ProjectDetail extends Component{
 					<Row>
 						<Col span={6}>
 							<div className="project-perview feature-perview">
-								<img src={require(`../image/file-12.jpg`)}/>
+								<img src={'http://www.web-jackiee.com/templets/blog/demo/publicImage/adminAtage/file-' + id%34 +'.jpg'}/>
 							</div>
 						</Col>
 						<Col span={14}>
@@ -136,7 +137,7 @@ class ProjectDetail extends Component{
 	}
 	//根据获取数据内的folders数组进行渲染,如果当前文件名=获取数据内deploy的文件名则渲染为active状态
 	getFolders(folders,deploy){
-		return folders.map(value => 
+		return folders.filter(value =>value !== '.git').map(value => 
 			<span key={value}>
 				<span className={`ant-breadcrumb-link${value==deploy?' active':''}`}
 					onClick={()=>this.handleFolders(value)}>{value}</span>
@@ -193,18 +194,20 @@ class ProjectDetail extends Component{
 		let {modelCommitInfo,modelPrompt} = this.state;
 		if(null === modelType || modelType == 'commitModle' && !Object.keys(modelCommitInfo).length) return;
 		switch(modelType){
-			case 'folderModle' :
+			case 'folderModle'  :
 				return this.renderPromptModel(modelPrompt,'您是否要切换','为上传文件');
 			case 'brancheModle' :
 				return this.renderPromptModel(modelPrompt,'您是否要切换','为本地分支');
 			case 'checkoutRemoteModle' :
 				return this.renderPromptModel(modelPrompt,'您是否要拉取','入本地分支');
-			case 'pullModle'  :
+			case 'pullModle'    :
 				return this.renderPromptModel(modelPrompt,'您是否确定要更新远程仓库至本地仓库');
 			case 'deployModle'  :
 				return this.renderPromptModel(modelPrompt,'您是否确定要上线该项目');
-			case 'commitModle':
+			case 'commitModle'  :
 				return this.renderCommitModle(modelCommitInfo);
+			case 'selectModle' :
+				return this.renderSelectModle(modelPrompt)
 			default :
 				return (<p></p>)
 		}
@@ -212,6 +215,25 @@ class ProjectDetail extends Component{
 	//渲染模态框的切换分支以及文件的展示
 	renderPromptModel(promptDate,str1='',str2=''){
 		return (<p className="modelPrompt">{str1}<span>{promptDate}</span>{str2}</p>)
+	}
+	//处理特殊情况,由于clone下来指定的deploy为build,当该项目中没有build文件时,后台会出问题
+	//此处在用户点击同步本地文件时,提供用户选择上线项目的操作
+	renderSelectModle(promptDate){
+		let {deploy,folders} = this.props.projectDetail,
+			li = folders.filter(item => item != '.git')
+		.map(item => 
+			<li className={item == deploy?"active":''} key={item} onClick={()=>this.handleSelectFolders(item)}>{item}</li>
+		)
+		return(<div className="modelSelect"><p><Icon type="exclamation-circle" />请先选择需要上线的文件</p><ul>{li}</ul></div>)
+	}
+	//特殊情况
+	handleSelectFolders(modelPrompt){
+		let{name} = this.props.params;
+		this.setState({loading : true})
+		this.props.selectFolder({repo_id:name,deploy:modelPrompt},
+			this.handleLoadingSucess.bind(this,`成功切换文件为${name}`,true),
+			this.handleLoadingFail.bind(this,'切换文件失败')
+		);
 	}
 	//渲染模态框的切换commit版本号的详细信息展示
 	renderCommitModle(modelDate){
@@ -247,8 +269,11 @@ class ProjectDetail extends Component{
 	handlePull(){
 		this.showModal('','pullModle');
 	}
-	//上传文件至本地服务器
+	//上传文件至本地服务器,由于clone下来指定的deploy为build,当该项目中没有build文件时,后台会出问题
+	//此处检查当deploy是build情况但folders并没有build文件时,用第二种方案处理
 	handleDeploy(){
+		const {deploy,folders} = this.props.projectDetail;
+		if(deploy === 'build' && folders.indexOf('build') < 0) return this.showModal('','selectModle');
 		this.showModal('','deployModle');
 	}
 	//antd组件展示model框,根据点击传参的modelType设置当前的modelType
@@ -295,6 +320,9 @@ class ProjectDetail extends Component{
 	    			this.handleLoadingFail.bind(this,'更新远程仓库失败'))
 				break;
 			case 'deployModle'  :
+			case 'selectModle'  :
+				const {deploy,folders} = this.props.projectDetail;
+				if(deploy === 'build' && folders.indexOf('build') < 0) return message.error('清先选择需要上线的文件');
 				this.props.deployFolder({repo_id:name},
 					this.handleLoadingSucess.bind(this,'成功上线该文件'),
 	    			this.handleLoadingFail.bind(this,'您的上线失败了'))
@@ -308,8 +336,8 @@ class ProjectDetail extends Component{
 	    this.setState({loading:true});
 	}
 	//成功后进行回调关闭loading以及模态框
-	handleLoadingSucess(str){
-		this.setState({loading:false,modelVisible:false});
+	handleLoadingSucess(str,isClose = false){
+		this.setState({loading:false,modelVisible:isClose});
 		message.success(str);
 	}
 	//失败后进行回调关闭loading以及模态框

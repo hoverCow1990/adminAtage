@@ -1,6 +1,5 @@
 import React,{Component} from 'react';
 import ReactEcharts from 'echarts-for-react';
-import {hashHistory} from 'react-router';				//路由跳转
 
 class ProChart extends Component{
 	constructor(){
@@ -13,6 +12,9 @@ class ProChart extends Component{
 		    legend: {
 		        bottom : 0,
 		        left : 0,
+		        textStyle:{
+		        	color:'#c5c5c5'
+		        },
 		        data:[]
 		    },
 		    title:{
@@ -54,8 +56,7 @@ class ProChart extends Component{
 		}
 	}
 	componentWillMount(){
-		let {select,data} = this.props;
-		this.initChartData(data);
+		this.initChartData(this.props.data);
 	}
 	render(){
 		let onEvents = {};
@@ -67,6 +68,9 @@ class ProChart extends Component{
 				    onEvents={this.onEvents()}  />
 			</div>
 		)
+	}
+	componentWillReceiveProps(nextProps){
+		this.initChartData(nextProps.data)
 	}
 	initChartData(allUser){
 		let lastLegend = this.state.legend,
@@ -81,7 +85,6 @@ class ProChart extends Component{
 		});
 		let legend = Object.assign(lastLegend,{data:legendArr}),
 			series = [Object.assign(lastSeries,{data:seriesArr})];
-
 		this.setState({
 			legend,
 			series

@@ -36,7 +36,7 @@ export const initLogin = (cb,isSetOther = true) => dispatch =>{
 				project
 			}));
 			isSetOther && dispatch(setOtherUserDate(res.users));
-			cb && cb(res.info.name);
+			cb && cb(res.info.name,res.users);
 		})
 		.catch(err => console.error(err));
 }

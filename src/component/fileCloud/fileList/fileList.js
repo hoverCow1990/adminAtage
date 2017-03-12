@@ -33,10 +33,6 @@ class FileList extends Component{
 		</li>)
 	}
 	shouldComponentUpdate(nextProps){
-		// console.log('---------------------');
-		// console.log(this.props)
-		// console.log(nextProps);
-		// console.log('---------------------');
 		return true;
 	}
 	//e.button(0为左键,2为右键),设置冒泡组组织背景层点击事件,点击左键时均调用福组件的hideMenu

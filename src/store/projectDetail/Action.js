@@ -26,7 +26,6 @@ export const setProDetail = query => dispatch => {
 		.withCredentials()
 		.then(cookieMiddleware(dispatch))
 		.then(res=>{
-			console.log(res);
 			res.commit_info instanceof Array && res.commit_info.reverse();
 			dispatch(setProDetailData(res));
 		})

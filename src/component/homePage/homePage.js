@@ -54,7 +54,7 @@ class HomePage extends Component{
 		let isOther = this.props.params.id;
 		if(isOther && !this.props.otherUser.length) return(<div></div>);
 		let data = isOther?this.props.otherUser.find(item=>item.id==isOther):this.props.adminData;
-		let{name,id,project} = data;
+		let{name,id,project} = data;		
 		if(!id) return(<div></div>)
 		return(
 			<article className="homePage baseWrapper">
@@ -73,7 +73,7 @@ class HomePage extends Component{
 				                <li><span className="tag">用户id:</span><span>{`000${id}`.slice(-4)}</span></li>
 				                <li><span className="tag">用户姓名:</span><span>{name}</span></li>
 				                <li><span className="tag">项目数量:</span><span>{project.length}</span></li>
-				                <li><span className="tag">gitHub:</span><span>{`https:/\/github.com\/letyougo`}</span></li>
+				                <li><span className="tag">gitHub:</span><span>{project[project.length-1].url.match(/https:\/\/github.com\/[^\/]+/)[0]}</span></li>
 				                <li><span className="tag">用户等级:</span><span>{this.getStar(project.length)}</span></li>
 				            </ul>
 						</Col>
@@ -125,7 +125,7 @@ class HomePage extends Component{
 			stNum = num*3,
 			enNum = stNum + 3,
 			btnStyle = this.props.params.id?'none':'block';
-		return project.slice(stNum,enNum).map(({description,id,name,url},index) => 
+		return [...project].reverse().slice(stNum,enNum).map(({description,id,name,url},index) => 
 			(<Col key={id} span={8}>
 				<section className="project-platform">
 					<div className="platform-container">

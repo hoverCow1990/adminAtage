@@ -59,7 +59,6 @@ class SlideNav extends Component{
 		return openKeys;
 	}
 	checkCurrentLink(){
-		console.log(this.props.currentLink)
 		switch(this.props.currentLink){
 			case 'login' :
 			case 'regist':
