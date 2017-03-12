@@ -115,6 +115,7 @@ class FileCloud extends Component{
 				<li>1. 可在他人文件夹下进行复制或黏贴</li>
 				<li>2. 不能在他人文件夹下进行删除 / 重名的操作</li>
 				<li>3. 云盘首页只能存放用户主文件夹,且不能重命名</li>
+				<li>4. 我文件夹下myWebpack和outFood无法删除</li>
 			</ul>
 		)
 	}
@@ -256,7 +257,7 @@ class FileCloud extends Component{
 				}else if(path === this.state.admin){
 					message.error('用户主文件夹不能删除');
 					return;
-				}else if(/(myWebpack|outFood)$/.test(path)){
+				}else if(/(myWebpack|outFood|adminAtage)/.test(path)){
 					message.error('myWebpack和outFood不能删,请自己新建文件夹或上传项目测试删除');
 					return;
 				}
